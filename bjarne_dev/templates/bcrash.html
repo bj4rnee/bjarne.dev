@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.svg">
+
+    <title>
+        bcrash
+    </title>
+
+    <!--     Fonts and icons     -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet" />
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+
+    <!-- CSS Files -->
+    <link href="/static/assets/css/bcrash.css" rel="stylesheet" />
+
+    <!--  d3.js  -->
+    <script src="/static/assets/js/d3_7_9_0.min.js"></script>
+</head>
+
+<body>
+    <div id="bcrash_wrapper">
+        <div id="recent_displ">
+            <div class="placeholder">0.00x</div>
+        </div>
+        <div id="graph_wrapper"></div>
+        <div class="ctrl_wrapper">
+            <table>
+                <tr>
+                    <td>
+                        <div id="balance">&#x1F9CA; 0</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input id="input_bet" type="number" placeholder="0.00" lang="en" step="10.00" min="0"></input>
+                    </td>
+                    <td><button id="half_bet" onclick="half_bet()">1/2</button></td>
+                    <td><button id="double_bet" onclick="double_bet()">x2</button></td>
+                    <td><button id="max_bet" onclick="max_bet()">max</button></td>
+                </tr>
+                <tr>
+                    <td><button class="button_bet" id="bet" type="button" onclick="button_press()">place bet</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input id="auto_co" type="number" placeholder="auto cashout" lang="en" step="0.5"
+                            min="0"></input></td>
+                    <td><label class="checkBox"><input id="toggle_auto" type="checkbox" onchange="toggle_auto(this)">
+                            <div class="transition"></div>
+                        </label></td>
+                    <td><button class="placeholder">.</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!--  bcrash  -->
+    <script src="/static/assets/js/bcrash.js"></script>
+</body>
+
+</html>

@@ -49,4 +49,8 @@ re_ipath = partial(_path, Pattern=IRegexPattern)
 urlpatterns = [
     path('', include('index.urls')),
     path('admin/', admin.site.urls),
+    path('cert/', include('cert.urls')),
+    path('synthwave/', include('synthwave.urls')),
+    path('bcrash/', include('bcrash.urls')),
+    path('is-blue-square/', include('is_blue_square.urls')),
 ]

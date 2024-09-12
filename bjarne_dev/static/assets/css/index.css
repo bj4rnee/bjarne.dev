@@ -1,0 +1,52 @@
+:root {
+    --main-font: "Poppins";
+    --light: #dfdfdf;
+    --dark: #161618;
+    --gray: #6c757d;
+    --gray-dark: #32325d;
+    --lighter: #e9ecef;
+    --primary: #e14eca;
+    --secondary: #f4f5f7;
+    --success: #00f2c3;
+    --info: #1d8cf8;
+    --warning: #ff8d72;
+    --danger: #fd5d93;
+    --default: rgb(44, 44, 44);
+    --neutral: #dfdfdf;
+    --darker: black;
+}
+
+html,
+input,
+textarea,
+button,
+g {
+    font-family: var(--main-font);
+}
+
+body {
+    color: var(--light);
+    background-color: var(--dark);
+    font-family: var(--main-font);
+}
+
+div#console {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.animated-char {
+    visibility: hidden;
+}
+
+span.ascii {
+    display: inline-block;
+    white-space: pre;
+    letter-spacing: 0;
+    line-height: 1;
+    font-family: 'Consolas', 'BitstreamVeraSansMono', 'CourierNew', Courier, monospace;
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent;
+}

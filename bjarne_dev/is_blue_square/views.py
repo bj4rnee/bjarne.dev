@@ -10,7 +10,6 @@ from django.views.generic import ListView
 from django import template
 from datetime import datetime, timedelta, date
 
-# cool colors: #6DC7FF, #E6ABFF, #1A6DFF #C822FF
-def index_view(request):
-    context = {'time': datetime.now().strftime('%H:%M:%S')}
+def ibs_view(request):
+    context = {}
     return render(request, "index.html", context)
