@@ -14,6 +14,10 @@
     --default: rgb(44, 44, 44);
     --neutral: #dfdfdf;
     --darker: black;
+    --gd-0: #6DC7FF;
+    --gd-1: #E6ABFF;
+    --gd-2: #1A6DFF;
+    --gd-3: #C822FF;
 }
 
 html,
@@ -36,8 +40,18 @@ div#console {
     align-items: center;
 }
 
-.animated-char {
+.animated-item {
     visibility: hidden;
+}
+
+span#banner {
+    background: linear-gradient(217deg, var(--gd-0), rgba(255, 0, 0, 0) 70.71%), linear-gradient(127deg, var(--gd-1), rgba(0, 255, 0, 0) 70.71%), linear-gradient(336deg, var(--gd-2), rgba(0, 0, 255, 0) 70.71%);
+    background-clip: text;
+    color: transparent;
+}
+
+span#banner span {
+    color: transparent;
 }
 
 span.ascii {
