@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="200" src="https://bjarne.dev/favicon.ico">
+  <img width="200" src="https://bjarne.dev/static/favicon.svg">
 </p>
 
 <p align="center">

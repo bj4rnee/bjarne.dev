@@ -19,7 +19,10 @@ CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 #STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_in_env", "static_root") 
 #STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static") 
-STATIC_ROOT = "/var/www/html/static" 
+STATIC_ROOT = "/home/bjarxxjd/public_html/static" 
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -31,9 +34,9 @@ except KeyError as e:
     SECRET_KEY = 'django-insecure-4vm+3676-5s4wvexnc(n)@+l+dlet$2^-&0@or!clg)z!i$#6)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "bjarne.dev"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "bjarne.dev", "www.bjarne.dev"]
 
 if DEBUG:
     CSRF_TRUSTED_ORIGINS = ['http://localhost','http://*.127.0.0.1']
