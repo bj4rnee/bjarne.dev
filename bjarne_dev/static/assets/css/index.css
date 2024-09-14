@@ -33,11 +33,25 @@ body {
     background-color: var(--dark);
     font-family: var(--main-font);
 }
-
+html, body {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center;    /* Center vertically */
+}
 div#console {
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* max-width: 100%; */
+    min-width: 0;
+    max-width: 100vw;
+    max-height: 100vh;
+    overflow: hidden;
+    padding: 10px;
+    box-sizing: border-box;
+    flex-shrink: 1;
 }
 
 .animated-item {
