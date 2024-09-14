@@ -3,20 +3,45 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, shrink-to-fit=yes">
+    <meta name="viewport" content="width=device-width">
     <link rel="icon" href="/static/favicon.png" sizes="any">
     <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
-    <title>400 Bad Request</title>
+
+    <title>
+        400 Bad Request
+    </title>
+
+    <!--     Fonts and icons     -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet" />
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
     <!-- CSS Files -->
     <link href="/static/assets/css/index.css" rel="stylesheet"/>
+
 </head>
 
 <body>
-    <h1>400 Bad Request</h1>
-    <p>Oops! Something went wrong.</p>
-    <p>The server is unable to process your request. Go back to the <a href="/"><b>homepage</b></a>.</p>
+<div id="console">
+<span id="cli" class="ascii">[<span style="color: #7bd833;">user@server164</span> {{ time }} <span style="color:#588fcd;">public_html</span>]$ <span id="cli_animation">./{{ request.site.name }}.sh -t -f '3d' &> error.html</span></span>
+<span id="banner" class="ascii animation animated-item">
+██╗  ██╗ ██████╗  ██████╗     ██████╗  █████╗ ██████╗     ██████╗ ███████╗ ██████╗ ██╗   ██╗███████╗███████╗████████╗
+██║  ██║██╔═████╗██╔═████╗    ██╔══██╗██╔══██╗██╔══██╗    ██╔══██╗██╔════╝██╔═══██╗██║   ██║██╔════╝██╔════╝╚══██╔══╝
+███████║██║██╔██║██║██╔██║    ██████╔╝███████║██║  ██║    ██████╔╝█████╗  ██║   ██║██║   ██║█████╗  ███████╗   ██║
+╚════██║████╔╝██║████╔╝██║    ██╔══██╗██╔══██║██║  ██║    ██╔══██╗██╔══╝  ██║▄▄ ██║██║   ██║██╔══╝  ╚════██║   ██║
+     ██║╚██████╔╝╚██████╔╝    ██████╔╝██║  ██║██████╔╝    ██║  ██║███████╗╚██████╔╝╚██████╔╝███████╗███████║   ██║
+     ╚═╝ ╚═════╝  ╚═════╝     ╚═════╝ ╚═╝  ╚═╝╚═════╝     ╚═╝  ╚═╝╚══════╝ ╚══▀▀═╝  ╚═════╝ ╚══════╝╚══════╝   ╚═╝
+</span>
+</div>
+<script>
+    const now = new Date();
+    const time = now.toLocaleTimeString('en-GB', { hour12: false });
+    let siteName = window.location.pathname.split('/').filter(Boolean)[0];
+    siteName = siteName || 'unknown';
+    const cliSpan = document.getElementById('cli');
+    cliSpan.innerHTML = `[<span style="color: #7bd833;">user@server164</span> ${time} <span style="color:#588fcd;">public_html</span>]$ <span id="cli_animation">./${siteName}.sh -t -f '3d' &> error.html</span>`;
+</script>
+<!--  index script  -->
+<script src="/static/assets/js/index.js"></script>
 </body>
-
 </html>
