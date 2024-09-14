@@ -49,8 +49,8 @@ html, body {
     align-items: center;
 }
 div#console {
-    display: flex;
-    flex-direction: column;
+    /* display: flex;
+    flex-direction: column; */
     /* align-items: center; */
     /* max-width: 100%; */
     min-width: 0;
@@ -59,7 +59,9 @@ div#console {
     overflow: visible;
     padding: 10px;
     box-sizing: border-box;
-    flex-shrink: 1;
+    /* flex-shrink: 1; */
+    position: absolute;
+    width: min-content;
 }
 
 .animated-item {
@@ -70,12 +72,14 @@ span#banner {
     background: linear-gradient(217deg, var(--gd-0), rgba(255, 0, 0, 0) 70.71%), linear-gradient(127deg, var(--gd-1), rgba(0, 255, 0, 0) 70.71%), linear-gradient(336deg, var(--gd-2), rgba(0, 0, 255, 0) 70.71%);
     background-clip: text;
     color: transparent;
-    max-width: 100vw;
+    overflow: visible;
+    /* max-width: 100vw; */
 }
 
 span#banner span {
     color: transparent;
-    max-width: 100vw;
+    /* max-width: 100vw; */
+    overflow: visible;
 }
 
 span.ascii {
