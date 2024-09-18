@@ -39,7 +39,8 @@ DEBUG = False
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "bjarne.dev", "www.bjarne.dev"]
 
 if DEBUG:
-    CSRF_TRUSTED_ORIGINS = ['http://localhost','http://*.127.0.0.1']
+    CSRF_TRUSTED_ORIGINS = ['http://localhost','http://*.127.0.0.1', 'http://192.168.178.22']
+    ALLOWED_HOSTS.append('192.168.178.22')
 
 # Application definition
 

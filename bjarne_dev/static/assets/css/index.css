@@ -41,13 +41,16 @@ body {
     background-color: var(--dark);
     font-family: var(--main-font);
 }
-html, body {
+
+html,
+body {
     height: 100%;
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 div#console {
     /* display: flex;
     flex-direction: column; */
@@ -88,8 +91,29 @@ span.ascii {
     letter-spacing: 0;
     line-height: 1;
     /* font-family: 'Consolas', 'BitstreamVeraSansMono', 'CourierNew', Courier, monospace; */
-    font-family: Consolas, 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', Menlo, monospace;
+    font-family: 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', Menlo, Consolas, monospace;
     border-width: 1px;
     border-style: solid;
     border-color: transparent;
+}
+
+.bottom {
+    color: var(--gray);
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.bottom a {
+    color: inherit;
+    -moz-transition: color 0.35s ease-in-out;
+    -webkit-transition: color 0.35s ease-in-out;
+    -ms-transition: color 0.35s ease-in-out;
+    transition: color 0.35s ease-in-out;
+}
+
+.bottom a:hover {
+    color: var(--light);
 }

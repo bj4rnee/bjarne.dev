@@ -24,7 +24,8 @@ let updateInterval = null;
 let autoInterval = null;
 let elapsedTime = 0;
 
-const width = window.innerWidth < 815 ? window.innerWidth - 68 : 750;
+const width = window.innerWidth < 815 ? window.innerWidth - (0.05 * window.innerWidth) : 750;
+const tWidth = window.innerWidth < 815 ? window.innerWidth - 68 : 750; //textWidth
 const height = 500;
 const margin = {
     left: 25,
@@ -114,13 +115,13 @@ function updateOverlayText(newY) {
     if (crashed) {
         overlayText.append("tspan")
             .attr("fill", "#fd5d93")
-            .attr("font-size", `${(width/7.5)-20}px`)
+            .attr("font-size", `${(tWidth/7.5)-20}px`)
             .text(`crashed @ ${newY.toFixed(2)}x`);
         path.attr("stroke", "#fd5d93");
     } else if (cashed) {
         overlayText.append("tspan")
             .attr("fill", "#00f2c3")
-            .attr("font-size", `${(width/7.5)-20}px`)
+            .attr("font-size", `${(tWidth/7.5)-20}px`)
             .text(`cashout @ ${newY.toFixed(2)}x`);
         path.attr("stroke", "#00f2c3");
     } else {
@@ -216,7 +217,7 @@ function start() {
         running = false;
         return;
     }
-    balance = balance - bet;
+    balance = Math.round((balance - bet + Number.EPSILON) * 100) / 100;
     document.getElementById("balance").innerHTML = "&#x1F9CA; " + balance.toFixed(2);
 
     const expValue = Math.max(1.00, generateExponentialRandom(0.2));
@@ -281,7 +282,7 @@ async function cashout() {
     clearInterval(updateInterval);
     document.getElementById("bet").innerHTML = "place bet";
 
-    balance = balance + (multiplier * bet);
+    balance = Math.round(((balance + (multiplier * bet)) + Number.EPSILON) * 100) / 100;
     document.getElementById("balance").innerHTML = "&#x1F9CA; " + balance.toFixed(2);
     recent.push(multiplier);
     updateOverlayText(multiplier);

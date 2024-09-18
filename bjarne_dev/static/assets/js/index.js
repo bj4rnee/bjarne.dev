@@ -31,7 +31,6 @@ function randomAnimateText(className, duration) {
   for (let element of elements) {
     const text = element.textContent;
     const totalDuration = duration || 1000;
-    const delayPerCharacter = totalDuration / text.length;
     const randomDelays = [];
 
     for (let i = 0; i < text.length; i++) {
@@ -50,6 +49,26 @@ function randomAnimateText(className, duration) {
 
       setTimeout(() => {
         span.style.visibility = 'visible';
+      }, randomDelays[index]);
+    });
+  }
+}
+
+function randomAnimateIcons(className, duration) {
+  const elements = document.getElementsByClassName(className);
+
+  for (let element of elements) {
+    const icons = element.querySelectorAll('.fa-li i');
+    const totalDuration = duration || 1000;
+    const randomDelays = [];
+
+    for (let i = 0; i < icons.length; i++) {
+      randomDelays.push(Math.random() * totalDuration);
+    }
+
+    icons.forEach((icon, index) => {
+      setTimeout(() => {
+        icon.style.visibility = 'visible';
       }, randomDelays[index]);
     });
   }
@@ -78,5 +97,6 @@ window.onload = function () {
   setRandomGDColor();
   animateText('cli_animation', 1500);
   setTimeout(() => { randomAnimateText('animation', 4000); }, 1500);
+  setTimeout(() => { randomAnimateIcons('icon_animation', 1500); }, 1500);
 
 };
