@@ -12,4 +12,4 @@ from datetime import datetime, timedelta, date
 
 def ibs_view(request):
     context = {}
-    return render(request, "index.html", context)
+    return render(request, "is-blue-square.html", context)

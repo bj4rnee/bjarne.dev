@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width">
+    <meta name="theme-color" content="#161618" />
+    <meta name="description" content="A casual game in which you have to quickly identify shapes and colors.">
+    <link rel="icon" href="/static/favicon.png" sizes="any">
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+
+    <title>
+        is-blue-square
+    </title>
+
+    <!--     Fonts and icons     -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet" />
+    <link href="https://use.fontawesome.com/releases/v6.4.2/css/all.css" rel="stylesheet">
+
+    <!-- CSS Files -->
+    <link href="/static/assets/css/index.css" rel="stylesheet" />
+    <link href="/static/assets/css/is-blue-square.css" rel="stylesheet" />
+
+    <!--  d3.js  -->
+    <script src="/static/assets/js/d3_7_9_0.min.js"></script>
+</head>
+
+<body>
+    <div id="ibs_wrapper">
+        <div class="meter" id="time-left">
+            <span style="width: 25%"></span>
+        </div>
+        <div class="ibs_control">
+            <button id="btn_vol" class="ibs_control_btn" onclick="alert('press')"><i
+                    class="fa-solid fa-volume-high"></i></button> <!-- fa-volume-xmark-->
+            <div id="div_usr"><button id="btn_usr" class="ibs_control_btn" onclick="alert('press 2')">login <i
+                        class="fa-solid fa-user"></i></button></div>
+        </div>
+        <div id="div_scr">1337</div>
+        <div id="ibs_view"><span>blue square?</span><div id="shape_viewport"><i style="color: var(--info);" class="fa-solid fa-square fa-2xl"></i></div></div>
+        <div id="ibs_noyes"><button class="btn_noyes" onclick="alert('no')">NO</button><button class="btn_noyes" onclick="alert('yes')">YES</button></div>
+    </div>
+    <!--  ibs script  -->
+    <script src="/static/assets/js/is-blue-square.js"></script>
+</body>
+
+</html>

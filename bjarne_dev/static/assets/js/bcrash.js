@@ -347,8 +347,8 @@ function toggle_auto(cb) {
     if (cb.checked) {
         autoInterval = setInterval(() => {
             if (!running && !crashed && !cashed) {
-                start(); 
                 document.getElementById("bet").innerHTML = "cashout";
+                start();
              }
         }, 1200);
     } else {

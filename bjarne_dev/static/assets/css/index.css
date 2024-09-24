@@ -28,6 +28,14 @@
     src: local(''), url('/static/assets/fonts/Consolas.ttf') format('truetype');
 } */
 
+/* Fira Code - monospace */
+@font-face {
+    font-family: 'Fira Code';
+    font-style: normal;
+    font-weight: 400;
+    src: local(''), url('/static/assets/fonts/FiraCode-Regular.ttf') format('truetype');
+}
+
 html,
 input,
 textarea,
@@ -81,6 +89,7 @@ span#banner {
 
 span#banner span {
     color: transparent;
+    letter-spacing: -0.015em;
     /* max-width: 100vw; */
     overflow: visible;
 }
@@ -91,7 +100,7 @@ span.ascii {
     letter-spacing: 0;
     line-height: 1;
     /* font-family: 'Consolas', 'BitstreamVeraSansMono', 'CourierNew', Courier, monospace; */
-    font-family: 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', Menlo, Consolas, monospace;
+    font-family: 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', Menlo, Consolas, 'Fira Code', monospace;
     border-width: 1px;
     border-style: solid;
     border-color: transparent;
