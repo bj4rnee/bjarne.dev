@@ -52,5 +52,6 @@ urlpatterns = [
     path('cert/', include('cert.urls')),
     path('synthwave/', include('synthwave.urls')),
     path('bcrash/', include('bcrash.urls')),
+    path('uptime/', include('uptime.urls')),
     path('is-blue-square/', include('is_blue_square.urls')),
 ]

@@ -34,7 +34,7 @@ except KeyError as e:
     SECRET_KEY = 'django-insecure-4vm+3676-5s4wvexnc(n)@+l+dlet$2^-&0@or!clg)z!i$#6)'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "bjarne.dev", "www.bjarne.dev"]
 
