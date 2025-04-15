@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width">
+    <meta name="theme-color" content="#161618" />
+    <meta name="description" content="Simple and privacy focused url shortner service">
+    <link rel="icon" href="/static/favicon.png" sizes="any">
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+
+    <title>
+        urlshort
+    </title>
+
+    <!--     Fonts and icons     -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet" />
+    <link href="https://use.fontawesome.com/releases/v6.4.2/css/all.css" rel="stylesheet">
+
+    <!-- CSS Files -->
+    <link href="/static/assets/css/index.css" rel="stylesheet" />
+    <link href="/static/assets/css/bcrash.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id="bcrash_wrapper">
+        <form id="urlForm" action="/s/" method="get">
+            <div>
+                <label for="urlInput" class="ushort_label">Your long URL:</label>
+                {% if og_url %}
+                <input type="text" id="urlInput" name="url" placeholder="Enter URL" value="{{ og_url}}">
+                {% else %}
+                <input type="text" id="urlInput" name="url" placeholder="Enter URL">
+                {% endif %}
+            </div>
+            <button type="submit">Shorten</button>
+        </form>
+        {% if not error %}
+        <label for="short_hash" class="ushort_label">New URL:</label>
+        <input type="text" id="short_hash" readonly="readonly" value="{{ new_url }}" data-hash="{{ hash }}">
+        <button type="button" id="copy_btn" title="Copy to clipboard">
+            <i id="copy_icon" class="fa-solid fa-copy"></i>
+        </button>
+        {% elif og_url %}
+        <div style="color:var(--warning)">{{ paragraph }}</div>
+        {% endif %}
+    </div>
+    
+    <!--  javascript  -->
+    <script src="/static/assets/js/urlshort.js"></script>
+</body>
+
+</html>

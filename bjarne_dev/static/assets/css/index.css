@@ -1,4 +1,5 @@
 :root {
+    color-scheme: dark;
     --main-font: "Poppins";
     --light: #dfdfdf;
     --dark: #161618;
@@ -125,4 +126,8 @@ span.ascii {
 
 .bottom a:hover {
     color: var(--light);
+}
+
+label.ushort_label {
+    display: block;
 }

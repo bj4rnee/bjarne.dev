@@ -54,4 +54,5 @@ urlpatterns = [
     path('bcrash/', include('bcrash.urls')),
     path('uptime/', include('uptime.urls')),
     path('is-blue-square/', include('is_blue_square.urls')),
+    path('s/', include('urlshort.urls')),
 ]
