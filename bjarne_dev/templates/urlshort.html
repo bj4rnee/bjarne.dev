@@ -29,24 +29,29 @@
             <div>
                 <label for="urlInput" class="ushort_label">Your long URL:</label>
                 {% if og_url %}
-                <input type="text" id="urlInput" name="url" placeholder="Enter URL" value="{{ og_url}}">
+                <input type="text" id="urlInput" name="url" placeholder="Enter URL" value="{{ og_url}}"
+                    maxlength="2048">
                 {% else %}
-                <input type="text" id="urlInput" name="url" placeholder="Enter URL">
+                <input type="text" id="urlInput" name="url" placeholder="Enter URL" maxlength="2048">
                 {% endif %}
             </div>
             <button type="submit">Shorten</button>
         </form>
         {% if not error %}
-        <label for="short_hash" class="ushort_label">New URL:</label>
-        <input type="text" id="short_hash" readonly="readonly" value="{{ new_url }}" data-hash="{{ hash }}">
-        <button type="button" id="copy_btn" title="Copy to clipboard">
-            <i id="copy_icon" class="fa-solid fa-copy"></i>
-        </button>
+        <div>
+            <label for="short_hash" class="ushort_label">New URL:</label>
+            <div class="short_hash_wrapper">
+                <input type="text" id="short_hash" readonly="readonly" value="{{ new_url }}" data-hash="{{ hash }}">
+                <button class="button_copy" type="button" id="copy_btn" title="Copy to clipboard">
+                    <i id="copy_icon" class="fa-solid fa-copy"></i>
+                </button>
+            </div>
+        </div>
         {% elif og_url %}
         <div style="color:var(--warning)">{{ paragraph }}</div>
         {% endif %}
     </div>
-    
+
     <!--  javascript  -->
     <script src="/static/assets/js/urlshort.js"></script>
 </body>
