@@ -4,6 +4,7 @@ from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 
 import random
+import secrets
 import string
 from urllib.parse import urlparse
 from django.utils import timezone
@@ -31,8 +32,12 @@ def url_short_view(request):
         error = False
     except ValidationError:
         if url:
-            paragraph = "the URL is invalid :("
-
+            paragraph = "The URL is invalid :("
+    except ValueError as e:
+        paragraph = str(e)
+    except Exception as e:
+            paragraph = "An unexpected error occurred. Please try again later -.-"
+    
     context = {"hash": hash, "error": error, "paragraph": paragraph, "new_url": f"https://bjarne.dev/s/{hash}", "og_url": url}
     return render(request, "urlshort.html", context)
 
@@ -52,20 +57,18 @@ def shorten(url):
     if existing:
         return existing.hash
     
-    for _ in range(250):
-        # create random 5 letter ascii string (916132832 possible combinations)
-        random_hash = ''.join(random.choices(string.ascii_letters + string.digits, k=5))
-        if not Shorted_url.objects.filter(hash=random_hash).exists():
-            mapping = Shorted_url(original_url=url, hash=random_hash, creation_date=timezone.now())
-            mapping.save()
-            return random_hash
+    hash_length = 5
+    max_attempts = 250
+    
+    while hash_length <= 8:
+        for _ in range(max_attempts):
+            # create random 5 letter ascii string (916132832 possible combinations)
+            random_hash = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(hash_length))
+            if not Shorted_url.objects.filter(hash=random_hash).exists():
+                mapping = Shorted_url(original_url=url, hash=random_hash, creation_date=timezone.now())
+                mapping.save()
+                return random_hash
+        hash_length += 1  # increase length if max attempts reached. Waaay more possible combinations
 
-    # as fallback overwrite the oldest record
-    oldest = Shorted_url.objects.order_by('creation_date').first()
-    if oldest:
-        oldest.original_url = url
-        oldest.creation_date = timezone.now()
-        oldest.save()
-        return oldest.hash
-    else:
-        raise Exception("[Error]: No available hashes and database is empty.")
+    # all lengths fail (extremely unlikely), raise error
+    raise ValueError("Unable to generate a unique short URL after maximum attempts :<")
