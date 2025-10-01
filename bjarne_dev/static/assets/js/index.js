@@ -96,9 +96,9 @@ function setRandomGDColor() {
 function replaceSpacesWithNbsp(className) {
   const elements = document.getElementsByClassName(className);
   
-  elements.forEach((el) => {
+  for (const el of elements) {
     el.innerHTML = el.innerHTML.replace(/ /g, '&nbsp;');
-  });
+  }
 }
 
 window.onload = function () {
