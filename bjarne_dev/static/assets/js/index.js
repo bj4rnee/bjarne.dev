@@ -93,8 +93,17 @@ function setRandomGDColor() {
   document.documentElement.style.setProperty('--gd-3', niceRandomColor());
 }
 
+function replaceSpacesWithNbsp(className) {
+  const elements = document.getElementsByClassName(className);
+  
+  elements.forEach((el) => {
+    el.innerHTML = el.innerHTML.replace(/ /g, '&nbsp;');
+  });
+}
+
 window.onload = function () {
   setRandomGDColor();
+  replaceSpacesWithNbsp('animation');
   animateText('cli_animation', 1500);
   setTimeout(() => { randomAnimateText('animation', 4000); }, 1500);
   setTimeout(() => { randomAnimateIcons('icon_animation', 1500); }, 1500);
