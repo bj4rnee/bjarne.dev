@@ -21,6 +21,10 @@
     --gd-3: #C822FF;
 }
 
+@media (prefers-color-scheme: light) {
+  /* no light mode here, dark only 💀 */
+}
+
 /* Consolas - monospace */
 /* @font-face {
     font-family: 'Consolas';
