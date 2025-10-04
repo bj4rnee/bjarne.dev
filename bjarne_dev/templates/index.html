@@ -3,10 +3,11 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=0.25, shrink-to-fit=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5, shrink-to-fit=yes">
     <meta name="theme-color" content="#161618" />
     <meta name="color-scheme" content="dark">
     <meta name="description" content="Welcome to my personal homepage. You will find my current and past projects here.">
+    <meta name="visit-token" content="{{ visit_token }}">
     <link rel="icon" href="/static/favicon.png" sizes="any">
     <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
@@ -40,15 +41,21 @@
 </div>
 <!--  index script  -->
 <script src="/static/assets/js/index.js"></script>
+<script src="/static/assets/js/incr-visits.js"></script>
 <div class="bottom">
-    <ul class="fa-ul icon_animation animated-item">
-        <li><a href="https://twitter.com/bj4rneee"><span class="fa-li"><i class="fa-brands fa-x-twitter"></i></span><span class="ascii animation animated-item">Twitter</span></a></li>
-        <li><a href="https://github.com/bj4rnee"><span class="fa-li"><i class="fa-brands fa-github"></i></span><span class="ascii animation animated-item">Github</span></a></li>
-        <li><a href="https://stackoverflow.com/users/12209580"><span class="fa-li"><i class="fa-brands fa-stack-overflow"></i></span><span class="ascii animation animated-item">Stack Overflow</span></a></li>
-        <li><a href="https://soundcloud.com/bj4rnee"><span class="fa-li"><i class="fa-brands fa-soundcloud"></i></span><span class="ascii animation animated-item">Soundcloud</span></a></li>
-        <li><a href="https://discordapp.com/users/206818060286296065"><span class="fa-li"><i class="fa-brands fa-discord"></i></span><span class="ascii animation animated-item">Discord</span></a></li>
-        <li><a href="https://steamcommunity.com/id/bj4rne/"><span class="fa-li"><i class="fa-brands fa-steam"></i></span><span class="ascii animation animated-item">Steam</span></a></li>
-    </ul>
+    <div class="footer-content">
+        <ul class="fa-ul icon_animation animated-item">
+            <li><a href="https://twitter.com/bj4rneee"><span class="fa-li"><i class="fa-brands fa-x-twitter"></i></span><span class="ascii animation animated-item">Twitter</span></a></li>
+            <li><a href="https://github.com/bj4rnee"><span class="fa-li"><i class="fa-brands fa-github"></i></span><span class="ascii animation animated-item">Github</span></a></li>
+            <li><a href="https://stackoverflow.com/users/12209580"><span class="fa-li"><i class="fa-brands fa-stack-overflow"></i></span><span class="ascii animation animated-item">Stack Overflow</span></a></li>
+            <li><a href="https://soundcloud.com/bj4rnee"><span class="fa-li"><i class="fa-brands fa-soundcloud"></i></span><span class="ascii animation animated-item">Soundcloud</span></a></li>
+            <li><a href="https://discordapp.com/users/206818060286296065"><span class="fa-li"><i class="fa-brands fa-discord"></i></span><span class="ascii animation animated-item">Discord</span></a></li>
+            <li><a href="https://steamcommunity.com/id/bj4rne/"><span class="fa-li"><i class="fa-brands fa-steam"></i></span><span class="ascii animation animated-item">Steam</span></a></li>
+        </ul>
+        <ul class="fa-ul icon_animation animated-item custom-fa-ul">
+            <li><span class="ascii animation animated-item">Total Visits: {{ total_visits }}</span><span class="fa-li"><i class="fa-regular fa-eye"></i></span></li>
+        </ul>
+    </div>
 </div>
 </body>
 </html>

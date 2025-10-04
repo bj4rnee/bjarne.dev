@@ -1,3 +1,4 @@
 from django.db import models
 
-# Create your models here.
+class VisitCounter(models.Model):
+    count = models.PositiveIntegerField(default=0)

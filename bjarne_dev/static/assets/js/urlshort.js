@@ -1,4 +1,6 @@
-document.getElementById("copy_btn").addEventListener("click", function () {
+const copyBtn = document.getElementById("copy_btn");
+if (copyBtn) {
+  copyBtn.addEventListener("click", function () {
     const input = document.getElementById("short_hash");
     const icon = document.getElementById("copy_icon");
 
@@ -21,3 +23,4 @@ document.getElementById("copy_btn").addEventListener("click", function () {
         console.error("[Error]: copy failed.", err);
       });
   });
+}

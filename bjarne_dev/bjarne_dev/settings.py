@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'urlshort.apps.UrlshortConfig',
+    'index.apps.IndexConfig',
 ]
 
 MIDDLEWARE = [

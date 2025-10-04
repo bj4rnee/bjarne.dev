@@ -22,7 +22,7 @@
 }
 
 @media (prefers-color-scheme: light) {
-  /* no light mode here, dark only 💀 */
+    /* no light mode here, dark only 💀 */
 }
 
 /* Consolas - monospace */
@@ -132,6 +132,20 @@ span.ascii {
     color: var(--light);
 }
 
+div.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
 label.ushort_label {
     display: block;
+}
+
+/* target only specific list to avoid breaking all fa-ul lists */
+.custom-fa-ul .fa-li {
+  position: static;
+  display: inline-block;
+  transform: none;
+  margin-right: 8px;
 }
