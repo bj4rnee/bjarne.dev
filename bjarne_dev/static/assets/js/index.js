@@ -101,6 +101,21 @@ function replaceSpacesWithNbsp(className) {
   }
 }
 
+function scaleConsole() {
+  const ascii = document.querySelector('#console');
+  if (!ascii) return;
+
+  const baseWidth = ascii.scrollWidth;
+  const viewport = window.innerWidth;
+  const scale = Math.min(viewport / baseWidth, 1); // never upscale
+
+  ascii.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener('load', scaleConsole);
+window.addEventListener('resize', scaleConsole);
+window.addEventListener('orientationchange', scaleConsole);
+
 window.onload = function () {
   setRandomGDColor();
   replaceSpacesWithNbsp('animation');

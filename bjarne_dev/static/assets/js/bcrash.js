@@ -24,8 +24,7 @@ let updateInterval = null;
 let autoInterval = null;
 let elapsedTime = 0;
 
-const width = window.innerWidth < 815 ? window.innerWidth - (0.05 * window.innerWidth) : 750;
-const tWidth = window.innerWidth < 815 ? window.innerWidth - 68 : 750; //textWidth
+const width = 750;
 const height = 500;
 const margin = {
     left: 25,
@@ -111,17 +110,18 @@ function interpColor(y) {
 
 function updateOverlayText(newY) {
     overlayText.selectAll("tspan").remove();
+    overlayText.style("font-family", "monospace");
 
     if (crashed) {
         overlayText.append("tspan")
             .attr("fill", "#fd5d93")
-            .attr("font-size", `${(tWidth/7.5)-20}px`)
+            .attr("font-size", `${(width/7.5)-20}px`)
             .text(`crashed @ ${newY.toFixed(2)}x`);
         path.attr("stroke", "#fd5d93");
     } else if (cashed) {
         overlayText.append("tspan")
             .attr("fill", "#00f2c3")
-            .attr("font-size", `${(tWidth/7.5)-20}px`)
+            .attr("font-size", `${(width/7.5)-20}px`)
             .text(`cashout @ ${newY.toFixed(2)}x`);
         path.attr("stroke", "#00f2c3");
     } else {
@@ -203,7 +203,6 @@ function start() {
     if (running) {
         return;
     }
-    //console.log("start");
     cashed = false;
     crashed = false;
     multiplier = 1.00;
@@ -297,7 +296,6 @@ async function crash() {
     if (!running) {
         return;
     }
-    //console.log("crash");
     running = false;
     crashed = true;
     clearInterval(updateInterval);
@@ -356,3 +354,18 @@ function toggle_auto(cb) {
         document.getElementById("bet").innerHTML = "cashout";
     }
 }
+
+function scaleBcrash() {
+  const wrapper = document.querySelector('#bcrash_wrapper');
+  if (!wrapper) return;
+
+  const baseWidth = wrapper.scrollWidth + 4; // 4px border
+  const viewport = window.innerWidth;
+  const scale = Math.min(viewport / baseWidth, 1); // never upscale
+
+  wrapper.style.transform = `scale(${scale})`;
+}
+
+window.addEventListener('load', scaleBcrash);
+window.addEventListener('resize', scaleBcrash);
+window.addEventListener('orientationchange', scaleBcrash);

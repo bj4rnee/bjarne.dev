@@ -120,6 +120,20 @@ span.ascii {
     box-sizing: border-box;
 }
 
+/* increase font size on touch devices for easier tapping */
+/* @media (hover: none) and (pointer: coarse) {
+    .bottom {
+        font-size: x-large;
+    }
+} */
+
+@media (max-width: 1000px) {
+  div#console {
+    /* transform: scale(0.5); */
+    max-width: unset;
+  }
+}
+
 .bottom a {
     color: inherit;
     -moz-transition: color 0.35s ease-in-out;
@@ -144,8 +158,8 @@ label.ushort_label {
 
 /* target only specific list to avoid breaking all fa-ul lists */
 .custom-fa-ul .fa-li {
-  position: static;
-  display: inline-block;
-  transform: none;
-  margin-right: 8px;
+    position: static;
+    display: inline-block;
+    transform: none;
+    margin-right: 8px;
 }
