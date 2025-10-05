@@ -52,6 +52,7 @@ function randomAnimateText(className, duration) {
       }, randomDelays[index]);
     });
   }
+  scaleConsole();
 }
 
 function randomAnimateIcons(className, duration) {
