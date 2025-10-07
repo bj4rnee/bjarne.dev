@@ -16,7 +16,8 @@ from django.db.models import F
 def index_view(request):
     # unique token for this visit
     token = secrets.token_urlsafe(16)
-    cache.set(token, 1, timeout=300)  # 5-minute TTL
+    key = f'visit-token:{token}'
+    cache.set(key, 1, timeout=300)  # 5-minute TTL
     # get total visits from DB (no create if not exists)
     try:
         total_visits = VisitCounter.objects.get(pk=1).count
@@ -31,12 +32,13 @@ def index_view(request):
 
 def track_visit(request):
     token = request.GET.get('token')
-    if cache.get(token):
+    key = f'visit-token:{token}'
+    if cache.get(key):
         # atomic increment in DB
         updated = VisitCounter.objects.filter(pk=1).update(count=F('count') + 1)
         if updated == 0:
             # create with count=1 if it didnt exist
             VisitCounter.objects.create(pk=1, count=1)
-        cache.delete(f'visit_token_{token}')
+        cache.delete(key)
         return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'invalid'}, status=400)
