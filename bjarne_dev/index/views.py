@@ -42,3 +42,7 @@ def track_visit(request):
         cache.delete(key)
         return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'invalid'}, status=400)
+
+# custom csrf failure view to use 403.html
+def csrf_failure(request, reason=""):
+    return render(request, "403.html", {"reason": reason}, status=403)

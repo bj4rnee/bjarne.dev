@@ -139,3 +139,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# by default csrf failure doesnt automatically use 403.html
+CSRF_FAILURE_VIEW = "index.views.csrf_failure"

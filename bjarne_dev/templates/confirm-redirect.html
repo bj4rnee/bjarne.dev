@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=0.25, shrink-to-fit=yes">
+    <meta name="theme-color" content="#161618" />
+    <meta name="color-scheme" content="dark">
+    <meta name="darkreader-lock"/>
+    <link rel="icon" href="/static/favicon.png" sizes="any">
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+    <title>Confirm Redirect - urlshort</title>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet" />
+    <link href="https://use.fontawesome.com/releases/v6.4.2/css/all.css" rel="stylesheet">
+    <link href="/static/assets/css/index.css" rel="stylesheet" />
+    <link href="/static/assets/css/bcrash.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="container" id="bcrash_wrapper">
+        <h2>Confirm Redirect</h2>
+        <p>
+            Hey, you are about to open a link using the
+            <strong>{{ scheme }}</strong>
+            protocol. This may be <u>unsafe</u>. Proceed?
+        </p>
+
+        <p style="word-break: break-all;">
+            <tt style="color: var(--warning)">{{ original_url }}</tt>
+        </p>
+
+        <div style="margin-top: 2rem;">
+            <a href="{{ original_url }}" style="background-color: var(--success); color: var(--dark);
+                      padding: 8px 18px; border-radius: 10px;
+                      text-decoration: none; display: inline-block;">
+                <i class="fas fa-check"></i> Yes, Proceed
+            </a>
+
+            <a href="/s" style="display: inline-block; margin-left: 1rem;
+                      color: var(--gray); text-decoration: none;">
+                <i class="fas fa-times"></i> No, Go Back
+            </a>
+        </div>
+
+        <p style="margin-top: 2rem;">Short URL: <a href="{{ short_url }}" style="color: #3498db;">{{ short_url }}</a></p>
+    </div>
+</body>
+
+</html>
