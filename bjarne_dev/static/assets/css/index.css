@@ -1,3 +1,6 @@
+/* import Poppins font */
+@import url('/static/assets/css/poppins.css');
+
 :root {
     color-scheme: dark;
     --main-font: "Poppins";
@@ -25,20 +28,12 @@
     /* no light mode here, dark only 💀 */
 }
 
-/* Consolas - monospace */
-/* @font-face {
-    font-family: 'Consolas';
-    font-style: normal;
-    font-weight: 400;
-    src: local(''), url('/static/assets/fonts/Consolas.ttf') format('truetype');
-} */
-
 /* Fira Code - monospace */
 @font-face {
     font-family: 'Fira Code';
     font-style: normal;
     font-weight: 400;
-    src: local(''), url('/static/assets/fonts/FiraCode-Regular.ttf') format('truetype');
+    src: local(''), url('/static/assets/fonts/firacode/FiraCode-Regular.ttf') format('truetype');
 }
 
 html,
