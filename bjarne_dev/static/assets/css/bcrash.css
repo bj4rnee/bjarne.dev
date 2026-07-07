@@ -1,20 +1,4 @@
-:root {
-    color-scheme: dark;
-}
-
-html,
-input,
-textarea,
-button,
-g {
-    font-family: "Poppins";
-}
-
-body {
-    color: #dfdfdf;
-    background-color: #161618;
-    font-family: "Poppins";
-}
+/* Tokens come from index.css (always co-loaded) */
 
 div#recent_displ {
     display: flex;

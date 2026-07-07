@@ -33,7 +33,7 @@ const margin = {
     bottom: 25,
 };
 
-document.getElementById("balance").innerHTML = "&#x1F9CA; " + balance.toFixed(2);
+document.getElementById("balance").innerHTML = balance.toFixed(2);
 
 const svg = d3.select("#graph_wrapper")
     .append("svg")
@@ -115,13 +115,13 @@ function updateOverlayText(newY) {
     if (crashed) {
         overlayText.append("tspan")
             .attr("fill", "#fd5d93")
-            .attr("font-size", `${(width/7.5)-20}px`)
+            .attr("font-size", `${(width/7.5)-30}px`)
             .text(`crashed @ ${newY.toFixed(2)}x`);
         path.attr("stroke", "#fd5d93");
     } else if (cashed) {
         overlayText.append("tspan")
             .attr("fill", "#00f2c3")
-            .attr("font-size", `${(width/7.5)-20}px`)
+            .attr("font-size", `${(width/7.5)-30}px`)
             .text(`cashout @ ${newY.toFixed(2)}x`);
         path.attr("stroke", "#00f2c3");
     } else {
@@ -217,7 +217,7 @@ function start() {
         return;
     }
     balance = Math.round((balance - bet + Number.EPSILON) * 100) / 100;
-    document.getElementById("balance").innerHTML = "&#x1F9CA; " + balance.toFixed(2);
+    document.getElementById("balance").innerHTML = balance.toFixed(2);
 
     const expValue = Math.max(1.00, generateExponentialRandom(0.2));
 
@@ -282,7 +282,7 @@ async function cashout() {
     document.getElementById("bet").innerHTML = "place bet";
 
     balance = Math.round(((balance + (multiplier * bet)) + Number.EPSILON) * 100) / 100;
-    document.getElementById("balance").innerHTML = "&#x1F9CA; " + balance.toFixed(2);
+    document.getElementById("balance").innerHTML = balance.toFixed(2);
     recent.push(multiplier);
     updateOverlayText(multiplier);
     await new Promise(r => setTimeout(r, 1200));
