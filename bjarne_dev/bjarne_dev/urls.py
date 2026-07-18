@@ -14,8 +14,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
 from django.urls import path, include
+
+from .sitemaps import StaticViewSitemap
+from photo.sitemaps import PhotoSitemap
 
 # hack to get case insensitive urlpatterns to work
 import re
@@ -26,6 +32,7 @@ from django.urls.conf import _path
 from django.core.exceptions import ImproperlyConfigured
 
 
+# ipath hack overrides RoutePattern._compile, which Django 6.0 removed (routing moved to a descriptor). ipath silently lost its case-insensitivity. re_ipath still works
 class IRoutePattern(RoutePattern):
     def _compile(self, route):
         return re.compile(_route_to_regex(route, self._is_endpoint)[0], re.IGNORECASE)
@@ -46,6 +53,11 @@ class IRegexPattern(RegexPattern):
 ipath = partial(_path, Pattern=IRoutePattern)
 re_ipath = partial(_path, Pattern=IRegexPattern)
 
+sitemaps = {
+    'static': StaticViewSitemap,
+    'photo': PhotoSitemap,
+}
+
 urlpatterns = [
     path('', include('index.urls')),
     path('admin/', admin.site.urls),
@@ -54,4 +66,12 @@ urlpatterns = [
     path('is-blue-square/', include('is_blue_square.urls')),
     path('s/', include('urlshort.urls')),
     #path('f/', include('filelink.urls')),
+    path('photo/', include('photo.urls')),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps},
+         name='django.contrib.sitemaps.views.sitemap'),
 ]
+
+if settings.DEBUG:
+    # static pattern for local dev environment (to test /photo/ serving)
+    urlpatterns += static(settings.PHOTO_STORAGE_URL,
+                          document_root=settings.PHOTO_STORAGE_DIR)

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="theme-color" content="#161618" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="darkreader-lock" />
+    <meta name="description" content="my photography portfolio" />
+    <link rel="icon" href="/static/favicon.png" sizes="any" />
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png" />
+
+    <title>photography</title>
+
+    <!--     Fonts and icons     -->
+    <link href="/static/assets/fontawesome/css/all.min.css" rel="stylesheet" />
+
+    <!-- CSS Files -->
+    <link href="/static/assets/css/index.css" rel="stylesheet" />
+    <link href="/static/assets/css/photo.css" rel="stylesheet" />
+    <noscript
+      ><style>
+        .fade {
+          opacity: 1;
+          transform: none;
+        }
+      </style></noscript
+    >
+  </head>
+
+  <body>
+    <div class="photo_page">
+      <header class="photo_header">
+        <h1 class="photo_title">photography</h1>
+      </header>
+      <div id="avif_warning" class="avif_warning" hidden>
+        Sorry, your browser does not support viewing my photographs. Please
+        update or switch to a different browser.
+      </div>
+      <div class="collection_grid">
+        {% for c in collections %}
+        <a
+          class="collection_card fade"
+          href="{% url 'photo_collection' c.slug %}"
+        >
+          <img
+            class="collection_cover"
+            src="{{ c.cover_photo.thumb_url }}"
+            alt="{{ c.name }}"
+            loading="lazy"
+            decoding="async"
+          />
+          <div class="collection_meta">
+            <span class="collection_name">{{ c.name }}</span>
+            <span class="collection_count">{{ c.published_count }} photo{{ c.published_count|pluralize }}</span>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="bottom">
+      <div class="footer-content">
+        <ul class="fa-ul">
+          <li>
+            <a href="/"
+              ><span class="fa-li"><i class="fa-solid fa-arrow-left"></i></span
+              ><span class="ascii">Back to Homepage</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <script type="module" src="/static/assets/js/photo.js"></script>
+  </body>
+</html>

@@ -39,9 +39,9 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "") == "1"
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "bjarne.dev", "www.bjarne.dev"]
 
 if DEBUG:
-    CSRF_TRUSTED_ORIGINS = ['http://localhost','http://*.127.0.0.1', 'http://192.168.178.22']
-    ALLOWED_HOSTS.append('192.168.178.22')
+    CSRF_TRUSTED_ORIGINS = ['http://localhost','http://*.127.0.0.1']
     ALLOWED_HOSTS.append('*')
+    os.environ["DJANGO_RUNSERVER_HIDE_WARNING"] = "true" # supress this annoyance in new Django version
 
 # Application definition
 
@@ -52,8 +52,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sitemaps',
     'urlshort.apps.UrlshortConfig',
     'index.apps.IndexConfig',
+    #'filelink.apps.FilelinkConfig',
+    'photo.apps.PhotoConfig',
 ]
 
 MIDDLEWARE = [
@@ -142,3 +145,52 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # by default csrf failure doesnt automatically use 403.html
 CSRF_FAILURE_VIEW = "index.views.csrf_failure"
+
+# ---------------------------------------------------------------------------
+# FileLink
+# ---------------------------------------------------------------------------
+# per-upload size caps, global storage cap, and rate-limit windows
+FILELINK_PER_FILE_BYTES = int(os.environ.get('FILELINK_PER_FILE_BYTES', 100 * 1024 * 1024)) # 100 MB
+FILELINK_PER_TXT_BYTES = int(os.environ.get('FILELINK_PER_TXT_BYTES', 1 * 1024 * 1024)) # 1 MB
+FILELINK_GLOBAL_BYTES = int(os.environ.get('FILELINK_GLOBAL_BYTES', 15 * 1024 ** 3)) # 15 GB
+FILELINK_DISK_RESERVE_BYTES = int(os.environ.get('FILELINK_DISK_RESERVE_BYTES', 1 * 1024 ** 3)) # 1 GB
+FILELINK_UPLOAD_RATE = int(os.environ.get('FILELINK_UPLOAD_RATE', 30)) # 30 uploads per hour
+FILELINK_BLOB_RATE = int(os.environ.get('FILELINK_BLOB_RATE', 1000)) # blob requests per hour
+
+# cap multipart bodies so worker memory is not wasted before
+# the views own size check fires
+DATA_UPLOAD_MAX_MEMORY_SIZE = 2 * 1024 * 1024  # forms (non-file) cap 2MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 2 * 1024 * 1024  # spill to disk above this
+
+# cross-worker shared cache used for rate-limit + failure counters.
+# MAX_ENTRIES is a backstop only: Django reaps expired files lazily, cleanup advised (purge_expired)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'media', '.cache'),
+        'TIMEOUT': 3600,
+        'OPTIONS': {'MAX_ENTRIES': 1000},
+    },
+}
+
+# tighter referrer policy for the whole site
+SECURE_REFERRER_POLICY = 'same-origin'
+
+# ---------------------------------------------------------------------------
+# Photo portfolio
+# ---------------------------------------------------------------------------
+# the derivatives are written straight into
+# a directory the webserver already serves: in production that is
+# public_html/static, so image bytes never round-trip through Python. In
+# DEBUG they sit under MEDIA_ROOT and runserver serves them (see urls.py)
+if DEBUG:
+    PHOTO_STORAGE_DIR = os.path.join(BASE_DIR, 'media', 'photo')
+    PHOTO_STORAGE_URL = '/media/photo/'
+else:
+    PHOTO_STORAGE_DIR = os.path.join(STATIC_ROOT, 'photo')
+    PHOTO_STORAGE_URL = '/static/photo/'
+
+# longest-edge caps (px) and AVIF quality for the generated derivatives
+PHOTO_THUMB_EDGE = int(os.environ.get('PHOTO_THUMB_EDGE', 900))
+PHOTO_LARGE_EDGE = int(os.environ.get('PHOTO_LARGE_EDGE', 2560))
+PHOTO_AVIF_QUALITY = int(os.environ.get('PHOTO_AVIF_QUALITY', 65))

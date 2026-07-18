@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#161618" />
+    <meta name="color-scheme" content="dark">
+    <meta name="darkreader-lock"/>
+    <meta name="description" content="{{ collection.name }} photography collection">
+    <link rel="icon" href="/static/favicon.png" sizes="any">
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+
+    <title>
+        {{ collection.name }}.jpg
+    </title>
+
+    <!--     Fonts and icons     -->
+    <link href="/static/assets/fontawesome/css/all.min.css" rel="stylesheet">
+
+    <!-- CSS Files -->
+    <link href="/static/assets/css/index.css" rel="stylesheet" />
+    <link href="/static/assets/css/photoswipe.css" rel="stylesheet" />
+    <link href="/static/assets/css/photo.css" rel="stylesheet" />
+    <noscript><style>.fade{opacity:1;transform:none}</style></noscript>
+</head>
+
+<body>
+    <div class="photo_page">
+        <a class="back_link" href="{% url 'photo_index' %}"><i class="fa-solid fa-arrow-left"></i>back to collections</a>
+        <header class="photo_header">
+            <h1 class="photo_title">{{ collection.name }}</h1>
+            {% if collection.description %}<p class="photo_desc">{{ collection.description }}</p>{% endif %}
+        </header>
+        <div id="photo_grid" class="photo_grid">
+            {% for p in photos %}
+            <a class="photo_link photo_item fade" href="{{ p.large_url }}"
+               data-pswp-width="{{ p.width }}" data-pswp-height="{{ p.height }}"
+               target="_blank" rel="noreferrer">
+                <img class="photo_img" src="{{ p.thumb_url }}" alt="{{ p.title }}"
+                     loading="lazy" decoding="async">
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script type="module" src="/static/assets/js/photo.js"></script>
+</body>
+
+</html>

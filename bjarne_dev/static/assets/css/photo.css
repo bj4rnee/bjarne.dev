@@ -1,0 +1,189 @@
+/* Tokens, fonts and body colours come from index.css */
+html {
+    height: auto;
+    display: block;
+    overflow-x: hidden;
+    overflow-y: visible;
+}
+
+/* Sticky footer: body is a full-height column and .photo_page grows to push
+   .bottom to the bottom. So the footer sits at the window bottom on short pages
+   and below the content on tall ones. index.css pins it absolute, undone here. */
+body {
+    height: auto;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    overflow-x: visible;
+    overflow-y: visible;
+    padding: 0;
+}
+
+.bottom {
+    position: static;
+    width: fit-content;
+}
+
+.photo_page {
+    flex: 1 0 auto;
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+    box-sizing: border-box;
+}
+
+.back_link {
+    display: inline-block;
+    color: var(--gray);
+    text-decoration: none;
+    font-size: 0.95rem;
+    margin-bottom: 18px;
+    transition: color 0.3s ease;
+}
+
+.back_link:hover {
+    color: var(--success);
+}
+
+.back_link i {
+    margin-right: 6px;
+}
+
+.photo_header {
+    margin-bottom: 26px;
+}
+
+.photo_title {
+    font-weight: 600;
+    font-size: 2rem;
+    margin: 0;
+    color: var(--light);
+}
+
+.photo_desc {
+    color: var(--gray);
+    margin: 8px 0 0;
+    max-width: 640px;
+    line-height: 1.5;
+}
+
+/* Shown by photo.js only when the browser can't decode AVIF */
+.avif_warning {
+    max-width: 420px;
+    margin: 40px auto;
+    padding: 16px 20px;
+    border: 2px solid var(--warning);
+    border-radius: 10px;
+    color: var(--warning);
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* Collection landing cards */
+.collection_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.collection_card {
+    position: relative;
+    display: block;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 3 / 2;
+    text-decoration: none;
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease;
+}
+
+.collection_card:hover {
+    border-color: var(--success);
+}
+
+.collection_cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.collection_card:hover .collection_cover {
+    transform: scale(1.05);
+}
+
+.collection_meta {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+}
+
+.collection_name {
+    color: var(--light);
+    font-weight: 600;
+}
+
+.collection_count {
+    color: var(--light);
+    opacity: 0.85;
+    font-size: 0.85rem;
+}
+
+/* Photo grid, masonry via CSS columns so mixed aspect ratios pack tightly */
+.photo_grid {
+    column-width: 320px;
+    column-gap: 14px;
+}
+
+.photo_item {
+    display: block;
+    margin: 0 0 14px;
+    break-inside: avoid;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: zoom-in;
+}
+
+.photo_img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.5s ease;
+}
+
+.photo_item:hover .photo_img {
+    transform: scale(1.04);
+}
+
+/* scroll reveal: JS flips .visible, noscript override keeps them shown */
+.fade {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade.visible {
+    opacity: 1;
+    transform: none;
+}
+
+@media (max-width: 640px) {
+    .photo_page {
+        padding: 20px 12px 60px;
+    }
+
+    .photo_title {
+        font-size: 1.6rem;
+    }
+}
