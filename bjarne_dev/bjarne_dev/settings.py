@@ -190,7 +190,8 @@ else:
     PHOTO_STORAGE_DIR = os.path.join(STATIC_ROOT, 'photo')
     PHOTO_STORAGE_URL = '/static/photo/'
 
-# longest-edge caps (px) and AVIF quality for the generated derivatives
+# longest-edge caps (px), AVIF quality and encode speed for derivatives
 PHOTO_THUMB_EDGE = int(os.environ.get('PHOTO_THUMB_EDGE', 900))
 PHOTO_LARGE_EDGE = int(os.environ.get('PHOTO_LARGE_EDGE', 2560))
 PHOTO_AVIF_QUALITY = int(os.environ.get('PHOTO_AVIF_QUALITY', 65))
+PHOTO_AVIF_SPEED = int(os.environ.get('PHOTO_AVIF_SPEED', 4))  # 0 slowest/best, 10 fastest

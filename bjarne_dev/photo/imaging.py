@@ -117,12 +117,13 @@ def _orientation(width: int, height: int) -> str:
     return 'square'
 
 
-def process_upload(fileobj, photo_id: str) -> dict:
+def process_upload(fileobj, photo_id: str, speed=None) -> dict:
     """Read EXIF, write both AVIF derivatives, return dims + metadata.
 
     'fileobj' is any file-like the caller owns (a Django UploadedFile in
-    admin). Returns width/height of the large image, its orientation, and a
-    metadata dict for blank-field pre-fill.
+    admin). 'speed' overrides PHOTO_AVIF_SPEED for this encode. Returns
+    width/height of the large image, its orientation, and a metadata dict
+    for blank-field pre-fill.
     """
     fileobj.seek(0)
     with Image.open(fileobj) as img:
@@ -140,11 +141,13 @@ def process_upload(fileobj, photo_id: str) -> dict:
             (settings.PHOTO_THUMB_EDGE, settings.PHOTO_THUMB_EDGE), RESAMPLE)
 
     quality = settings.PHOTO_AVIF_QUALITY
+    if speed is None:
+        speed = settings.PHOTO_AVIF_SPEED
     storage.storage_root()
     large.save(storage.derivative_path(photo_id, 'large'),
-               'AVIF', quality=quality, speed=1)
+               'AVIF', quality=quality, speed=speed)
     thumb.save(storage.derivative_path(photo_id, 'thumb'),
-               'AVIF', quality=quality, speed=1)
+               'AVIF', quality=quality, speed=speed)
 
     width, height = large.size
     return {
