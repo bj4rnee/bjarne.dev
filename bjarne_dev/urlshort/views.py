@@ -9,6 +9,7 @@ import string
 from urllib.parse import urlparse
 from django.utils import timezone
 
+from bjarne_dev import ratelimit
 from .models import Shorted_url
 
 # validate URI, allow any scheme except unsafe ones
@@ -45,6 +46,7 @@ def is_valid_uri(uri):
 def url_short_view(request):
     hash = ""
     error = True
+    status = 200
     paragraph = "no url entered..."
     url = request.GET.get('url', None)
     json = request.GET.get('json', None)
@@ -66,8 +68,14 @@ def url_short_view(request):
             if settings.DEBUG:
                 print(f"Validating URL: {url} - Valid: {is_valid}, Error: {error_msg}")
             if is_valid:
-                hash = shorten(url)
-                error = False
+                if ratelimit.allow(request, 'us:create',
+                                   per_ip=settings.URLSHORT_CREATE_IP_RATE,
+                                   global_=settings.URLSHORT_CREATE_RATE):
+                    hash = shorten(url)
+                    error = False
+                else:
+                    paragraph = "Too many URLs shortened right now. Please try again later."
+                    status = 429
             else:
                 paragraph = error_msg
         else:
@@ -80,9 +88,9 @@ def url_short_view(request):
     context = {"hash": hash, "error": error, "paragraph": paragraph, "new_url": f"https://bjarne.dev/s/{hash}", "og_url": url}
 
     if json:
-        return JsonResponse(context)
-    
-    return render(request, "urlshort.html", context)
+        return JsonResponse(context, status=status)
+
+    return render(request, "urlshort.html", context, status=status)
 
 # fetch URL-Model-Object from Database with hash and redirect
 # if no hash is found, raise 404

@@ -5,14 +5,11 @@ from django.shortcuts import render, redirect
 from django.core.cache import cache
 from datetime import datetime, timedelta, date
 import secrets
+from bjarne_dev import ratelimit
 from .models import VisitCounter
 from django.db.models import F
 
-# some cool hsl colors;
-# hsl(138,92%,55%);
-# hsl(219,53%,69%);
-# hsl(252,82%,56%);
-# hsl(230,91%,69%);
+
 def index_view(request):
     # unique token for this visit
     token = secrets.token_urlsafe(16)
@@ -34,6 +31,11 @@ def track_visit(request):
     token = request.GET.get('token')
     key = f'visit-token:{token}'
     if cache.get(key):
+        # only "real" page loads should reach here, so this bounds counter inflation
+        if not ratelimit.allow(request, 'idx:visit',
+                               per_ip=settings.INDEX_VISIT_IP_RATE,
+                               global_=settings.INDEX_VISIT_RATE):
+            return JsonResponse({'status': 'rate_limited'}, status=429)
         # atomic increment in DB
         updated = VisitCounter.objects.filter(pk=1).update(count=F('count') + 1)
         if updated == 0:

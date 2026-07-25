@@ -149,13 +149,11 @@ CSRF_FAILURE_VIEW = "index.views.csrf_failure"
 # ---------------------------------------------------------------------------
 # FileLink
 # ---------------------------------------------------------------------------
-# per-upload size caps, global storage cap, and rate-limit windows
+# per-upload size caps and global storage cap
 FILELINK_PER_FILE_BYTES = int(os.environ.get('FILELINK_PER_FILE_BYTES', 100 * 1024 * 1024)) # 100 MB
 FILELINK_PER_TXT_BYTES = int(os.environ.get('FILELINK_PER_TXT_BYTES', 1 * 1024 * 1024)) # 1 MB
 FILELINK_GLOBAL_BYTES = int(os.environ.get('FILELINK_GLOBAL_BYTES', 15 * 1024 ** 3)) # 15 GB
 FILELINK_DISK_RESERVE_BYTES = int(os.environ.get('FILELINK_DISK_RESERVE_BYTES', 1 * 1024 ** 3)) # 1 GB
-FILELINK_UPLOAD_RATE = int(os.environ.get('FILELINK_UPLOAD_RATE', 30)) # 30 uploads per hour
-FILELINK_BLOB_RATE = int(os.environ.get('FILELINK_BLOB_RATE', 1000)) # blob requests per hour
 
 # cap multipart bodies so worker memory is not wasted before
 # the views own size check fires
@@ -171,10 +169,33 @@ CACHES = {
         'TIMEOUT': 3600,
         'OPTIONS': {'MAX_ENTRIES': 1000},
     },
+    # rate-limit counters, isolated from default cache
+    'ratelimit': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'media', '.cache-rl'),
+        'TIMEOUT': 7200,
+        'OPTIONS': {'MAX_ENTRIES': 5000},
+    },
 }
 
 # tighter referrer policy for the whole site
 SECURE_REFERRER_POLICY = 'same-origin'
+
+# ---------------------------------------------------------------------------
+# Rate limits (per hour is default)
+# ---------------------------------------------------------------------------
+RATELIMIT_IP_HEADER = os.environ.get('RATELIMIT_IP_HEADER') or None  # None: use REMOTE_ADDR
+
+URLSHORT_CREATE_IP_RATE = int(os.environ.get('URLSHORT_CREATE_IP_RATE', 25))
+URLSHORT_CREATE_RATE = int(os.environ.get('URLSHORT_CREATE_RATE', 250))
+
+INDEX_VISIT_IP_RATE = int(os.environ.get('INDEX_VISIT_IP_RATE', 100))
+INDEX_VISIT_RATE = int(os.environ.get('INDEX_VISIT_RATE', 1000))
+
+FILELINK_UPLOAD_IP_RATE = int(os.environ.get('FILELINK_UPLOAD_IP_RATE', 10))
+FILELINK_UPLOAD_RATE = int(os.environ.get('FILELINK_UPLOAD_RATE', 100))
+FILELINK_BLOB_IP_RATE = int(os.environ.get('FILELINK_BLOB_IP_RATE', 1200))
+FILELINK_BLOB_RATE = int(os.environ.get('FILELINK_BLOB_RATE', 10000))
 
 # ---------------------------------------------------------------------------
 # Photo portfolio
