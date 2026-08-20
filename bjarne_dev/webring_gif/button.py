@@ -74,8 +74,9 @@ def default_colors():
 
 def _load_cells():
     """Inked cells of the banner as (x, y, alpha)"""
-    rows = [r for r in (Path(__file__).parent / "banner.txt").read_text().split("\n")
-            if r.strip()]
+    # explicit utf-8, Passenger runs with no LANG so the default is ascii
+    banner = (Path(__file__).parent / "banner.txt").read_text(encoding="utf-8")
+    rows = [r for r in banner.split("\n") if r.strip()]
     width = max(len(r) for r in rows)
     cells = [(x, y, SHADE_ALPHA[ch])
              for y, row in enumerate(rows)
