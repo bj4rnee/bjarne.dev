@@ -67,6 +67,8 @@ urlpatterns = [
     path('s/', include('urlshort.urls')),
     #path('f/', include('filelink.urls')),
     path('photo/', include('photo.urls')),
+    # webring expects a bare <size>.gif
+    path('88x31.gif', include('webring_gif.urls')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps},
          name='django.contrib.sitemaps.views.sitemap'),
 ]

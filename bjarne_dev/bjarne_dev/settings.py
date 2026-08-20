@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'index.apps.IndexConfig',
     #'filelink.apps.FilelinkConfig',
     'photo.apps.PhotoConfig',
+    'webring_gif.apps.WebringGifConfig',
 ]
 
 MIDDLEWARE = [
