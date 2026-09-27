@@ -13,9 +13,14 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# load variables from file if possible
+load_dotenv(BASE_DIR / ".env")
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 #STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_in_env", "static_root") 
 #STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static") 
@@ -150,11 +155,26 @@ CSRF_FAILURE_VIEW = "index.views.csrf_failure"
 # ---------------------------------------------------------------------------
 # FileLink
 # ---------------------------------------------------------------------------
-# per-upload size caps and global storage cap
-FILELINK_PER_FILE_BYTES = int(os.environ.get('FILELINK_PER_FILE_BYTES', 100 * 1024 * 1024)) # 100 MB
-FILELINK_PER_TXT_BYTES = int(os.environ.get('FILELINK_PER_TXT_BYTES', 1 * 1024 * 1024)) # 1 MB
-FILELINK_GLOBAL_BYTES = int(os.environ.get('FILELINK_GLOBAL_BYTES', 15 * 1024 ** 3)) # 15 GB
+# per-upload file size caps. past a few hundred MB also needs the webserver's own request-body limit
+# raised to PART_BYTES
+FILELINK_PER_FILE_BYTES = int(os.environ.get('FILELINK_PER_FILE_BYTES', 512 * 1024 ** 2)) # 512 MB
+FILELINK_GLOBAL_BYTES = int(os.environ.get('FILELINK_GLOBAL_BYTES', 12 * 1024 ** 3)) # 12 GB
 FILELINK_DISK_RESERVE_BYTES = int(os.environ.get('FILELINK_DISK_RESERVE_BYTES', 1 * 1024 ** 3)) # 1 GB
+# ceiling on bytes tied up by uploads still in flight
+FILELINK_STAGING_BYTES = int(os.environ.get('FILELINK_STAGING_BYTES', 4 * 1024 ** 3)) # 4 GB
+
+# client-side AES-GCM frame. overhead at 8 KB per 2 GB
+FILELINK_FRAME_BYTES = int(os.environ.get('FILELINK_FRAME_BYTES', 4 * 1024 ** 2)) # 4 MiB
+# bytes per part request. bound for how much webserver buffer holds at once
+# independent of file size. Must be a multiple of 16!!
+FILELINK_PART_BYTES = int(os.environ.get('FILELINK_PART_BYTES', 8 * 1024 ** 2)) # 8 MiB
+# slack over PART_BYTES allowed on a part body
+FILELINK_PART_SLACK_BYTES = int(os.environ.get('FILELINK_PART_SLACK_BYTES', 4096))
+
+# how long untracked files sit before collected by purge. has to outlast part upload time
+FILELINK_ORPHAN_GRACE_SECONDS = int(os.environ.get('FILELINK_ORPHAN_GRACE_SECONDS', 3600))
+# must stay >= longest TTL any cache key uses
+FILELINK_CACHE_GRACE_SECONDS = int(os.environ.get('FILELINK_CACHE_GRACE_SECONDS', 7200))
 
 # cap multipart bodies so worker memory is not wasted before
 # the views own size check fires
@@ -193,18 +213,24 @@ URLSHORT_CREATE_RATE = int(os.environ.get('URLSHORT_CREATE_RATE', 250))
 INDEX_VISIT_IP_RATE = int(os.environ.get('INDEX_VISIT_IP_RATE', 100))
 INDEX_VISIT_RATE = int(os.environ.get('INDEX_VISIT_RATE', 1000))
 
+# bound resolver traffic, page loads are cached
+IP_RDNS_IP_RATE = int(os.environ.get('IP_RDNS_IP_RATE', 60))
+IP_RDNS_RATE = int(os.environ.get('IP_RDNS_RATE', 600))
+
+# filelink rate limits
 FILELINK_UPLOAD_IP_RATE = int(os.environ.get('FILELINK_UPLOAD_IP_RATE', 10))
 FILELINK_UPLOAD_RATE = int(os.environ.get('FILELINK_UPLOAD_RATE', 100))
+# part budget is upload budget multiplied out. Raise alongside PER_FILE_BYTES.
+FILELINK_PART_IP_RATE = int(os.environ.get('FILELINK_PART_IP_RATE', 5000))
+FILELINK_PART_RATE = int(os.environ.get('FILELINK_PART_RATE', 50000))
 FILELINK_BLOB_IP_RATE = int(os.environ.get('FILELINK_BLOB_IP_RATE', 1200))
 FILELINK_BLOB_RATE = int(os.environ.get('FILELINK_BLOB_RATE', 10000))
 
 # ---------------------------------------------------------------------------
 # Photo portfolio
 # ---------------------------------------------------------------------------
-# the derivatives are written straight into
-# a directory the webserver already serves: in production that is
-# public_html/static, so image bytes never round-trip through Python. In
-# DEBUG they sit under MEDIA_ROOT and runserver serves them (see urls.py)
+# derivatives are written straight into public_html/static
+# In DEBUG they sit under MEDIA_ROOT and runserver serves them (see urls.py)
 if DEBUG:
     PHOTO_STORAGE_DIR = os.path.join(BASE_DIR, 'media', 'photo')
     PHOTO_STORAGE_URL = '/media/photo/'

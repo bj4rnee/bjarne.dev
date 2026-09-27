@@ -78,6 +78,9 @@ def client_key(request) -> str:
 def allow(request, name: str, *, per_ip: int = None,
           global_: int = None, window: int = 3600) -> bool:
     """Layered check: per-client cap first, then the global ceiling."""
+    if settings.DEBUG:
+        # nothing to protect on dev machine
+        return True
     if per_ip and not consume_token_bucket(
             f'rl:{name}:ip:{client_key(request)}', per_ip, window):
         return False

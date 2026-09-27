@@ -3,8 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.core.cache import cache
+from django.utils import timezone
 from datetime import datetime, timedelta, date
+import ipaddress
+import platform
 import secrets
+import socket
+import threading
+import django
 from bjarne_dev import ratelimit
 from .models import VisitCounter
 from django.db.models import F
@@ -44,6 +50,205 @@ def track_visit(request):
         cache.delete(key)
         return JsonResponse({'status': 'ok'})
     return JsonResponse({'status': 'invalid'}, status=400)
+
+# ---------------------------------------------------------------------------
+# /ip/ connection debug page
+# ---------------------------------------------------------------------------
+# Headers from request.headers (HTTP_* only). request.META carries process environment
+
+CGNAT_V4 = ipaddress.ip_network('100.64.0.0/10')
+ULA_V6 = ipaddress.ip_network('fc00::/7')
+
+# JSON should not leak live session
+REDACTED_HEADERS = {'cookie', 'authorization', 'proxy-authorization'}
+
+RDNS_TIMEOUT = 1.5  # seconds a PTR lookup may hold worker
+RDNS_TTL = 600      # cache for resolved name or a confirmed absence
+RDNS_FAIL_TTL = 60  # cache timeout briefly: cheap reload
+
+_MISS = object()
+
+
+def _address_facts(raw):
+    """Classify the peer address"""
+    facts = {'ip': raw or None, 'family': None, 'scope': None,
+             'v6_kind': None, 'v6_group': None}
+    try:
+        addr = ipaddress.ip_address(raw)
+    except ValueError:
+        return facts
+
+    facts['family'] = f'IPv{addr.version}'
+    tunnelled = False
+    if addr.version == 6:
+        if addr.ipv4_mapped:
+            # plain IPv4 peer on a dual-stack socket, classify the v4
+            facts['v6_kind'] = f'4-in-6 mapped, {addr.ipv4_mapped}'
+            facts['family'] = 'IPv4 in IPv6 form'
+            addr = addr.ipv4_mapped
+        else:
+            if addr.teredo:
+                facts['v6_kind'] = f'teredo, client v4 {addr.teredo[1]}'
+                tunnelled = True
+            elif addr.sixtofour:
+                facts['v6_kind'] = f'6to4, client v4 {addr.sixtofour}'
+                tunnelled = True
+            # same /64 grouping rate limiter buckets by
+            net = ipaddress.ip_network(f'{addr}/64', strict=False)
+            facts['v6_group'] = f'{net.network_address}/64'
+
+    if addr.is_loopback:
+        facts['scope'] = 'loopback'
+    elif addr.is_link_local:
+        facts['scope'] = 'link-local'
+    elif tunnelled:
+        # private according to ipaddress, but they carry a global v4
+        facts['scope'] = 'tunnelled'
+    elif addr.version == 4 and addr in CGNAT_V4:
+        facts['scope'] = 'CGNAT'
+    elif addr.version == 6 and addr in ULA_V6:
+        facts['scope'] = 'unique-local'
+    elif addr.is_private:
+        facts['scope'] = 'private'
+    elif addr.is_global:
+        facts['scope'] = 'global'
+    else:
+        facts['scope'] = 'reserved'
+    return facts
+
+
+def _rdns_lookup(ip):
+    """PTR for one address. '' is no record and None is a timeout"""
+    box = {}
+
+    def resolve():
+        try:
+            box['name'] = socket.gethostbyaddr(ip)[0]
+        except OSError:
+            box['name'] = ''
+
+    worker = threading.Thread(target=resolve, daemon=True)
+    worker.start()
+    # socket timeout dont reach libc, a black-holed PTR zone stalls this
+    # thread past the join. finishes on its own. request does not wait
+    worker.join(RDNS_TIMEOUT)
+    return box.get('name')
+
+
+def _rdns_result(request, client):
+    """reverse_dns row, only ever the caller's own address"""
+    if client['scope'] != 'global':
+        return 'skipped, not globally routable'
+
+    key = f'ip-rdns:{client["ip"]}'
+    name = cache.get(key, _MISS)
+    if name is _MISS:
+        # a cached answer is free, real resolver traffic spends budget
+        if not ratelimit.allow(request, 'idx:rdns',
+                               per_ip=settings.IP_RDNS_IP_RATE,
+                               global_=settings.IP_RDNS_RATE):
+            return 'skipped, rate limit reached'
+        name = _rdns_lookup(client['ip'])
+        cache.set(key, name, RDNS_TTL if name is not None else RDNS_FAIL_TTL)
+
+    if name is None:
+        return f'timed out after {RDNS_TIMEOUT:g}s'
+    return name or 'no PTR record'
+
+
+def _request_headers(request):
+    out = {}
+    for name, value in sorted(request.headers.items()):
+        if name.lower() in REDACTED_HEADERS:
+            out[name] = f'[redacted, {len(value)} chars]'
+        else:
+            out[name] = value
+    return out
+
+
+def _ip_payload(request):
+    now = timezone.now()
+    client = _address_facts(request.META.get('REMOTE_ADDR', ''))
+    client['source_port'] = request.META.get('REMOTE_PORT') or None
+    # nothing sits in front of LiteSpeed, this is client-supplied
+    client['forwarded_for'] = request.headers.get('X-Forwarded-For')
+    client['reverse_dns'] = None
+
+    return {
+        'client': client,
+        'request': {
+            'method': request.method,
+            'path': request.get_full_path(),
+            'host': request.get_host(),
+            'scheme': request.scheme,
+            'secure': request.is_secure(),
+            # LSAPI may report 1.1 even when browser negotiated h2
+            'server_protocol': request.META.get('SERVER_PROTOCOL'),
+            'tls_protocol': request.META.get('SSL_PROTOCOL'),
+            'tls_cipher': request.META.get('SSL_CIPHER'),
+            'time_utc': now.isoformat(timespec='seconds'),
+            'time_local': timezone.localtime(now).isoformat(timespec='seconds'),
+            'epoch_ms': int(now.timestamp() * 1000),
+        },
+        'server': {
+            'software': request.META.get('SERVER_SOFTWARE'),
+            'python': platform.python_version(),
+            'django': django.get_version(),
+            'time_zone': settings.TIME_ZONE,
+            'debug': settings.DEBUG,
+        },
+        'cookies': {name: f'{len(value)} chars'
+                    for name, value in sorted(request.COOKIES.items())},
+        'headers': _request_headers(request),
+    }
+
+
+def _text(value):
+    if value is None:
+        return 'n/a'
+    if isinstance(value, bool):
+        return 'true' if value else 'false'
+    return str(value)
+
+
+def _rows(payload, *names):
+    return [(name, [(key, _text(value)) for key, value in payload[name].items()])
+            for name in names]
+
+
+def _no_store(response):
+    # cached copy would show one visitor anothers connection BAD :(
+    response['Cache-Control'] = 'no-store, max-age=0'
+    return response
+
+
+def ip_view(request):
+    payload = _ip_payload(request)
+    if request.GET.get('rdns'):
+        payload['client']['reverse_dns'] = _rdns_result(request, payload['client'])
+
+    if request.GET.get('json'):
+        return _no_store(JsonResponse(payload))
+
+    context = {
+        'payload': payload,
+        'client_ip': payload['client']['ip'] or 'unknown',
+        'sections': _rows(payload, 'client', 'request', 'server'),
+        'dump': _rows(payload, 'cookies', 'headers'),
+    }
+    return _no_store(render(request, 'ip.html', context))
+
+
+def ip_ping(request):
+    """Empty 204, target for client-side RTT sampling"""
+    return _no_store(HttpResponse(status=204))
+
+
+def ip_rdns(request):
+    """PTR on its own route, page never blocks on DNS"""
+    client = _address_facts(request.META.get('REMOTE_ADDR', ''))
+    return _no_store(JsonResponse({'reverse_dns': _rdns_result(request, client)}))
+
 
 # custom csrf failure view to use 403.html
 def csrf_failure(request, reason=""):

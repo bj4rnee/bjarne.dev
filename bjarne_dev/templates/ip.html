@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" class="ip">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#161618" />
+    <meta name="color-scheme" content="dark">
+    <meta name="darkreader-lock"/>
+    <meta name="description" content="Debug info about your connection to the server">
+    <link rel="icon" href="/static/favicon.png" sizes="any">
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+
+    <title>
+        ip-info
+    </title>
+
+    <!--     Fonts and icons     -->
+    <link href="/static/assets/fontawesome/css/all.min.css" rel="stylesheet">
+
+    <!-- CSS Files -->
+    <link href="/static/assets/css/index.css" rel="stylesheet" />
+    <link href="/static/assets/css/bcrash.css" rel="stylesheet" />
+    <link href="/static/assets/css/ip.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id="ip_wrapper">
+        <div id="ip_head">
+            <div>
+                <div class="ip_label">your address</div>
+                <div id="ip_addr_row">
+                    <span id="ip_addr">{{ client_ip }}</span>
+                    <button class="button_copy" type="button" id="ip_copy_addr" title="Copy address">
+                        <i id="ip_copy_addr_icon" class="fa-solid fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="ip_actions">
+                <button type="button" id="ip_copy_json" title="Copy everything as JSON">
+                    <i id="ip_copy_json_icon" class="fa-solid fa-copy"></i> json
+                </button>
+            </div>
+        </div>
+
+        {% for title, rows in sections %}
+        <section class="ip_sec">
+            <h2>{{ title }}</h2>
+            {% for key, value in rows %}
+            <div class="ip_row"><span class="ip_k">{{ key }}</span><span class="ip_v"
+                    id="ip_v_{{ title }}_{{ key }}">{{ value }}</span></div>
+            {% endfor %}
+        </section>
+        {% endfor %}
+
+        <!-- filled in by ip.js -->
+        <section class="ip_sec" id="ip_sec_timing">
+            <h2>timing</h2>
+        </section>
+        <section class="ip_sec" id="ip_sec_browser">
+            <h2>browser</h2>
+        </section>
+        <section class="ip_sec" id="ip_sec_support">
+            <h2>support</h2>
+        </section>
+
+        <section class="ip_sec">
+            <h2>geo lookup</h2>
+            <p class="ip_note">Runs in your browser against api.ipquery.io.</p>
+            <button type="button" id="ip_geo_btn">lookup</button>
+            <pre id="ip_geo" hidden></pre>
+        </section>
+
+        {% for title, rows in dump %}
+        <section class="ip_sec">
+            <h2>{{ title }}</h2>
+            {% for key, value in rows %}
+            <div class="ip_row"><span class="ip_k">{{ key }}</span><span class="ip_v">{{ value }}</span></div>
+            {% empty %}
+            <div class="ip_row"><span class="ip_k">none sent</span></div>
+            {% endfor %}
+        </section>
+        {% endfor %}
+
+        <p class="ip_note" id="ip_foot">Same data as JSON: <code>/ip/?json=1</code>, add
+            <code>&amp;rdns=1</code> for the PTR record in one curl.</p>
+    </div>
+
+    {{ payload|json_script:"ip_server_data" }}
+
+    <!--  javascript  -->
+    <script src="/static/assets/js/ip.js"></script>
+    <div class="bottom">
+    <div class="footer-content">
+        <ul class="fa-ul">
+            <li><a href="/"><span class="fa-li"><i class="fa-solid fa-arrow-left"></i></span><span class="ascii">Back to Homepage</span></a></li>
+        </ul>
+    </div>
+    </div>
+</body>
+
+</html>
