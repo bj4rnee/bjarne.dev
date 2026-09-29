@@ -3,12 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.core.cache import cache
+from django.http.request import split_domain_port
 from django.utils import timezone
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, timezone as dt_timezone
 import ipaddress
 import platform
 import secrets
 import socket
+import ssl
 import threading
 import django
 from bjarne_dev import ratelimit
@@ -65,6 +67,10 @@ REDACTED_HEADERS = {'cookie', 'authorization', 'proxy-authorization'}
 RDNS_TIMEOUT = 1.5  # seconds a PTR lookup may hold worker
 RDNS_TTL = 600      # cache for resolved name or a confirmed absence
 RDNS_FAIL_TTL = 60  # cache timeout briefly: cheap reload
+
+CERT_TIMEOUT = 2
+CERT_TTL = 3600     # hour is plenty
+CERT_FAIL_TTL = 300
 
 _MISS = object()
 
@@ -156,6 +162,33 @@ def _rdns_result(request, client):
     return name or 'no PTR record'
 
 
+def _cert_lookup(host):
+    ctx = ssl.create_default_context()
+    with socket.create_connection((host, 443), timeout=CERT_TIMEOUT) as sock:
+        with ctx.wrap_socket(sock, server_hostname=host) as tls:
+            cert = tls.getpeercert()
+    return [datetime.fromtimestamp(ssl.cert_time_to_seconds(cert[k]), dt_timezone.utc).isoformat()
+            for k in ('notBefore', 'notAfter')]
+
+
+def _cert_dates(request):
+    """issued/expires of own cert"""
+    # tls ends in webserver. hacky fix is to connect to self like client would
+    if not request.is_secure():
+        return None, None
+    host = split_domain_port(request.get_host())[0]
+    key = f'ip-cert:{host}'
+    dates = cache.get(key)
+    if dates is None:
+        try:
+            dates = _cert_lookup(host)
+            cache.set(key, dates, CERT_TTL)
+        except (OSError, ValueError, KeyError):
+            dates = ['lookup failed'] * 2
+            cache.set(key, dates, CERT_FAIL_TTL)
+    return dates
+
+
 def _request_headers(request):
     out = {}
     for name, value in sorted(request.headers.items()):
@@ -170,9 +203,10 @@ def _ip_payload(request):
     now = timezone.now()
     client = _address_facts(request.META.get('REMOTE_ADDR', ''))
     client['source_port'] = request.META.get('REMOTE_PORT') or None
-    # nothing sits in front of LiteSpeed, this is client-supplied
+    # set by webserver, overwrites what client sent
     client['forwarded_for'] = request.headers.get('X-Forwarded-For')
     client['reverse_dns'] = None
+    cert_issued, cert_expires = _cert_dates(request)
 
     return {
         'client': client,
@@ -184,8 +218,6 @@ def _ip_payload(request):
             'secure': request.is_secure(),
             # LSAPI may report 1.1 even when browser negotiated h2
             'server_protocol': request.META.get('SERVER_PROTOCOL'),
-            'tls_protocol': request.META.get('SSL_PROTOCOL'),
-            'tls_cipher': request.META.get('SSL_CIPHER'),
             'time_utc': now.isoformat(timespec='seconds'),
             'time_local': timezone.localtime(now).isoformat(timespec='seconds'),
             'epoch_ms': int(now.timestamp() * 1000),
@@ -196,6 +228,8 @@ def _ip_payload(request):
             'django': django.get_version(),
             'time_zone': settings.TIME_ZONE,
             'debug': settings.DEBUG,
+            'cert_issued': cert_issued,
+            'cert_expires': cert_expires,
         },
         'cookies': {name: f'{len(value)} chars'
                     for name, value in sorted(request.COOKIES.items())},
@@ -211,8 +245,17 @@ def _text(value):
     return str(value)
 
 
+def _cls(value):
+    # bool coloring
+    if value is True:
+        return 'ip_yes'
+    if value is False:
+        return 'ip_no'
+    return ''
+
+
 def _rows(payload, *names):
-    return [(name, [(key, _text(value)) for key, value in payload[name].items()])
+    return [(name, [(key, _text(value), _cls(value)) for key, value in payload[name].items()])
             for name in names]
 
 

@@ -37,6 +37,25 @@
         return round(value / 1024) + ' KiB (' + value + ' B)';
     }
 
+    function boolClass(value) {
+        if (value === true) return ' ip_yes';
+        if (value === false) return ' ip_no';
+        return '';
+    }
+
+    // rtt rows min / avg / max get own color
+    var SPREAD = /^min ([\d.]+) \/ avg ([\d.]+) \/ max ([\d.]+) ms$/;
+
+    function spreadInto(el, m) {
+        ['min', 'avg', 'max'].forEach(function (name, i) {
+            var num = document.createElement('span');
+            num.className = 'ip_' + name;
+            num.textContent = m[i + 1];
+            el.append((i ? ' / ' : '') + name + ' ', num);
+        });
+        el.append(' ms');
+    }
+
     /* replace a sections rows, keep its heading */
     function fill(sectionId, values) {
         var section = document.getElementById(sectionId);
@@ -51,8 +70,10 @@
             k.className = 'ip_k';
             k.textContent = key;
             var v = document.createElement('span');
-            v.className = 'ip_v';
-            v.textContent = text(values[key]);
+            v.className = 'ip_v' + boolClass(values[key]);
+            var m = SPREAD.exec(text(values[key]));
+            if (m) spreadInto(v, m);
+            else v.textContent = text(values[key]);
             row.appendChild(k);
             row.appendChild(v);
             section.appendChild(row);
@@ -80,6 +101,16 @@
         });
 
     // ------------------------------------------------------------------- browser
+    // server stamps somewhere between request out and first byte back
+    // using midpoint should exclude page load time
+    function clockOffset() {
+        var nav = performance.getEntriesByType('navigation')[0];
+        var mid = nav && nav.responseStart
+            ? performance.timeOrigin + (nav.requestStart + nav.responseStart) / 2
+            : Date.now();
+        return round(mid - payload.request.epoch_ms) + ' ms vs server';
+    }
+
     function browserFacts() {
         var hints = navigator.userAgentData;
         var facts = {
@@ -88,7 +119,7 @@
             mobile_hint: hints ? hints.mobile : null,
             languages: (navigator.languages || []).join(', ') || navigator.language || null,
             timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || null,
-            clock_offset: (Date.now() - payload.request.epoch_ms) + ' ms vs server',
+            clock_offset: clockOffset(),
             viewport: window.innerWidth + ' x ' + window.innerHeight,
             screen: window.screen.width + ' x ' + window.screen.height,
             pixel_ratio: window.devicePixelRatio,

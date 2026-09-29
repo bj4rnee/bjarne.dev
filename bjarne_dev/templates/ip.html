@@ -47,8 +47,8 @@
         {% for title, rows in sections %}
         <section class="ip_sec">
             <h2>{{ title }}</h2>
-            {% for key, value in rows %}
-            <div class="ip_row"><span class="ip_k">{{ key }}</span><span class="ip_v"
+            {% for key, value, cls in rows %}
+            <div class="ip_row"><span class="ip_k">{{ key }}</span><span class="ip_v {{ cls }}"
                     id="ip_v_{{ title }}_{{ key }}">{{ value }}</span></div>
             {% endfor %}
         </section>
@@ -67,7 +67,7 @@
 
         <section class="ip_sec">
             <h2>geo lookup</h2>
-            <p class="ip_note">Runs in your browser against api.ipquery.io.</p>
+            <p class="ip_note">Runs in browser against api.ipquery.io</p>
             <button type="button" id="ip_geo_btn">lookup</button>
             <pre id="ip_geo" hidden></pre>
         </section>
@@ -75,7 +75,7 @@
         {% for title, rows in dump %}
         <section class="ip_sec">
             <h2>{{ title }}</h2>
-            {% for key, value in rows %}
+            {% for key, value, cls in rows %}
             <div class="ip_row"><span class="ip_k">{{ key }}</span><span class="ip_v">{{ value }}</span></div>
             {% empty %}
             <div class="ip_row"><span class="ip_k">none sent</span></div>
@@ -83,8 +83,8 @@
         </section>
         {% endfor %}
 
-        <p class="ip_note" id="ip_foot">Same data as JSON: <code>/ip/?json=1</code>, add
-            <code>&amp;rdns=1</code> for the PTR record in one curl.</p>
+        <p class="ip_note" id="ip_foot">Server-side data as JSON: <code>/ip/?json=1</code>, add
+            <code>&amp;rdns=1</code> for the PTR record.</p>
     </div>
 
     {{ payload|json_script:"ip_server_data" }}

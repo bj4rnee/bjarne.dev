@@ -190,3 +190,32 @@ class IpReverseDnsTests(TestCase):
             data = self.client.get(reverse('ip'), {'json': '1', 'rdns': '1'},
                                    REMOTE_ADDR=GLOBAL_V4).json()
         self.assertEqual(data['client']['reverse_dns'], 'host.example.net')
+
+
+class IpCertTests(TestCase):
+    DATES = ['2026-09-11T18:32:32+00:00', '2026-12-10T18:32:31+00:00']
+
+    def setUp(self):
+        cache.clear()
+
+    def _server(self, **extra):
+        return self.client.get(reverse('ip'), {'json': '1'}, **extra).json()['server']
+
+    def test_plain_http_skips_lookup(self):
+        with mock.patch('index.views._cert_lookup') as lookup:
+            server = self._server()
+        lookup.assert_not_called()
+        self.assertIsNone(server['cert_issued'])
+        self.assertIsNone(server['cert_expires'])
+
+    def test_lookup_once_then_cached(self):
+        with mock.patch('index.views._cert_lookup', return_value=self.DATES) as lookup:
+            self._server(secure=True)
+            server = self._server(secure=True)
+        lookup.assert_called_once_with('testserver')
+        self.assertEqual([server['cert_issued'], server['cert_expires']], self.DATES)
+
+    def test_failed_lookup_is_stated(self):
+        with mock.patch('index.views._cert_lookup', side_effect=OSError):
+            server = self._server(secure=True)
+        self.assertEqual(server['cert_issued'], 'lookup failed')

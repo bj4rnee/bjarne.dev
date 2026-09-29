@@ -114,6 +114,21 @@ html.ip .bottom {
     color: var(--warning);
 }
 
+/* bools and rtt */
+.ip_v.ip_yes,
+.ip_v .ip_min {
+    color: var(--success);
+}
+
+.ip_v .ip_avg {
+    color: var(--warning);
+}
+
+.ip_v.ip_no,
+.ip_v .ip_max {
+    color: var(--danger);
+}
+
 .ip_note {
     color: var(--gray);
     margin: 0 0 10px 0;
