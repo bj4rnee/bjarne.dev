@@ -1,0 +1,201 @@
+/* notch and home bar safezones, these variables return on desktop */
+html.ip body {
+    box-sizing: border-box;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+#display_res {
+    font-size: clamp(1.1rem, 4.5vw, 1.7rem);
+    color: var(--success);
+}
+
+/* keycap style gets code look plus a key edge */
+.ip_note kbd {
+    padding: 0 5px;
+    border: 1px solid #ffffff40;
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    background: #ffffff17;
+    color: var(--light);
+    font: inherit;
+}
+
+/* full width buttons */
+#display_tests button {
+    width: 100%;
+}
+
+#display_stage {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: #000;
+    overflow: hidden;
+    /* swipes caught and handled differently, mouseevents unaffected */
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* hide cursor when idle (around 2s) */
+#display_stage.idle {
+    cursor: none;
+}
+
+#display_view,
+#display_view > canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#display_view > canvas {
+    image-rendering: pixelated; /* make sure the browser doesnt fucc up the canvas with smooting */
+}
+
+#display_label,
+.display_caption {
+    position: absolute;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: #000000b3;
+    color: var(--light);
+    font: 0.8rem 'SF Mono', SFMono-Regular, ui-monospace, 'DejaVu Sans Mono', Menlo, Consolas, monospace;
+}
+
+#display_label {
+    left: max(12px, env(safe-area-inset-left));
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: opacity 0.3s;
+}
+
+#display_stage.idle:not(.pinned) #display_label {
+    opacity: 0;
+    pointer-events: none;
+}
+
+#display_close {
+    margin: 0;
+    padding: 0 8px;
+    font-size: 0.7rem;
+}
+
+.display_caption {
+    right: max(12px, env(safe-area-inset-right));
+}
+
+@media (pointer: coarse) {
+    #display_stage {
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+    }
+
+    #display_close {
+        padding: 4px 14px;
+    }
+}
+
+/* small label on the thing itself, its colored in the js */
+.display_tag {
+    position: absolute;
+    top: 7px;
+    left: 12px;
+    font: 11px monospace;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+.display_tiles {
+    display: grid;
+    grid-template: repeat(2, 1fr) / repeat(3, 1fr);
+    gap: 4px;
+    height: 100%;
+}
+
+.display_tiles div {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.display_tiles div div {
+    width: 60%;
+    height: 60%;
+}
+
+.display_checker {
+    display: grid;
+    grid-template: repeat(4, 1fr) / repeat(6, 1fr);
+    gap: 2vmin;
+    height: 100%;
+    padding: 5vmin;
+    box-sizing: border-box;
+}
+
+.display_checker div {
+    position: relative;
+}
+
+.display_text {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: 100%;
+}
+
+.display_text div {
+    padding: 3vmin;
+    overflow: hidden;
+    background: #fff;
+    color: #000;
+}
+
+.display_text div + div {
+    background: #000;
+    color: #fff;
+}
+
+.display_text p {
+    margin: 0 0 0.5em;
+    white-space: nowrap;
+}
+
+.display_chroma {
+    display: grid;
+    grid-template: repeat(2, 1fr) / repeat(4, 1fr);
+    height: 100%;
+}
+
+.display_chroma div {
+    padding: 2vmin;
+    overflow: hidden;
+    font: 13px/1.4 system-ui, sans-serif;
+}
+
+.display_hdr {
+    display: flex;
+    height: 100%;
+}
+
+.display_hdr div {
+    position: relative;
+    flex: 1;
+}
+
+.display_hdr canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.display_hdr span {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    color: #000;
+    font: 0.8rem monospace;
+}

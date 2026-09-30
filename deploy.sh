@@ -18,4 +18,12 @@ if ! python $MANAGE makemigrations --check --dry-run; then
     exit 1
 fi
 python $MANAGE migrate --noinput
+# check if DEBUG is on in production (BAD)
+DEBUG_ON=$(python $MANAGE shell --no-imports -c 'from django.conf import settings; print(settings.DEBUG)' 2>/dev/null | tail -n 1)
+if [ "$DEBUG_ON" = "True" ]; then
+    echo -e "\033[1;97;41m                                                          \033[0m"
+    echo -e "\033[1;97;41m   [deploy] WARNING: DEBUG IS TRUE IN PRODUCTION !!!      \033[0m"
+    echo -e "\033[1;97;41m   tracebacks and settings are public. fix and redeploy   \033[0m"
+    echo -e "\033[1;97;41m                                                          \033[0m"
+fi
 echo -e "[deploy] done. \033[1mDon't forget to \x1b[38;2;187;024;156mrestart\x1b[0;1m the python application in cpanel! \033[0m"

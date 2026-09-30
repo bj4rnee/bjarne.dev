@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" class="ip">
+
+<head>
+    <meta charset="utf-8" />
+    <!-- viewport-fit: cover notch area. desktop ignores -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, viewport-fit=cover">
+    <!-- ios home screen meta tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="display">
+    <meta name="theme-color" content="#161618" />
+    <meta name="color-scheme" content="dark">
+    <meta name="darkreader-lock"/>
+    <meta name="description" content="Monitor test: gradients, gamut, dead pixels, burn-in, motion, hdr">
+    <link rel="icon" href="/static/favicon.png" sizes="any">
+    <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+
+    <title>
+        display-test
+    </title>
+
+    <!--     Fonts and icons     -->
+    <link href="/static/assets/fontawesome/css/all.min.css" rel="stylesheet">
+
+    <!-- CSS Files -->
+    <link href="/static/assets/css/index.css" rel="stylesheet" />
+    <link href="/static/assets/css/bcrash.css" rel="stylesheet" />
+    <link href="/static/assets/css/ip.css" rel="stylesheet" />
+    <link href="/static/assets/css/display.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id="ip_wrapper">
+        <div id="ip_head">
+            <div>
+                <div class="ip_label">your display</div>
+                <span id="display_res">...</span>
+            </div>
+            <div id="ip_actions">
+                <button type="button" id="ip_copy_json" title="Copy everything as JSON">
+                    <i id="ip_copy_json_icon" class="fa-solid fa-copy"></i> json
+                </button>
+            </div>
+        </div>
+
+        <!-- filled in by display.js -->
+        <section class="ip_sec" id="display_info">
+            <h2>display</h2>
+        </section>
+        <section class="ip_sec" id="display_tests">
+            <h2>tests</h2>
+        </section>
+
+        <p class="ip_note" id="ip_foot">Keys: <kbd>1</kbd>-<kbd>8</kbd> start, <kbd>←</kbd> <kbd>→</kbd> or click to step,
+            <kbd>↑</kbd> <kbd>↓</kbd> speed, <kbd>space</kbd> pause, <kbd>h</kbd> keep label, <kbd>esc</kbd> back <br>
+            Touch: tap or swipe <code>← →</code> to step, swipe <code>↓</code> back, in motion tap and swipe set speed</p>
+
+    </div>
+
+    <div id="display_stage" hidden>
+        <div id="display_view"></div>
+        <div id="display_label"><span id="display_label_text"></span><button type="button" id="display_close">close</button></div>
+    </div>
+
+    <!--  javascript  -->
+    <script src="/static/assets/js/display.js"></script>
+    <div class="bottom">
+    <div class="footer-content">
+        <ul class="fa-ul">
+            <li><a href="/"><span class="fa-li"><i class="fa-solid fa-arrow-left"></i></span><span class="ascii">Back to Homepage</span></a></li>
+        </ul>
+    </div>
+    </div>
+</body>
+
+</html>

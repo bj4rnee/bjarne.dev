@@ -74,7 +74,7 @@ def url_short_view(request):
                     hash = shorten(url)
                     error = False
                 else:
-                    paragraph = "Too many URLs shortened right now. Please try again later."
+                    paragraph = "Too many URLs shortened right now. Please try again later -.-"
                     status = 429
             else:
                 paragraph = error_msg

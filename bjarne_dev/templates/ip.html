@@ -83,8 +83,8 @@
         </section>
         {% endfor %}
 
-        <p class="ip_note" id="ip_foot">Server-side data as JSON: <code>/ip/?json=1</code>, add
-            <code>&amp;rdns=1</code> for the PTR record.</p>
+        <p class="ip_note" id="ip_foot">curl server-side data as JSON: <code>/ip/?json=1</code>, add
+            <code>&amp;rdns=1</code> for PTR record :]</p>
     </div>
 
     {{ payload|json_script:"ip_server_data" }}

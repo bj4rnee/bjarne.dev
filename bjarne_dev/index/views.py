@@ -293,6 +293,11 @@ def ip_rdns(request):
     return _no_store(JsonResponse({'reverse_dns': _rdns_result(request, client)}))
 
 
+# display-debug static page
+def display_view(request):
+    return render(request, 'display.html')
+
+
 # custom csrf failure view to use 403.html
 def csrf_failure(request, reason=""):
     return render(request, "403.html", {"reason": reason}, status=403)
