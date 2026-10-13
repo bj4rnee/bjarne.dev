@@ -642,12 +642,14 @@
         var res = Math.round(screen.width * d) + ' x ' + Math.round(screen.height * d);
         // ... is used as skeleton, json button does hopefully not wrap when hz lands
         var head = res + ' @ ' + (hz ? nominal(hz) : '...') + ' Hz';
+        // only chromium knows... rAF mostly ticks with primary screen unfortunately
+        var note = screen.isExtended ? ' [browser report may follow primary screen]' : '';
         var facts = {
             screen: screen.width + ' x ' + screen.height + ' css px',
             device_pixels: res,
             pixel_ratio: d,
             window: innerWidth + ' x ' + innerHeight,
-            refresh: hz ? hz.toFixed(2) + ' Hz' : 'measuring...',
+            refresh: hz ? hz.toFixed(2) + ' Hz' + note : 'measuring...',
             color_depth: screen.colorDepth + ' bit',
             gamut: gamut(),
             hdr: matchMedia('(dynamic-range: high)').matches,
@@ -660,9 +662,11 @@
     }
 
     // requestAnimationFrame ticks at screen refresh
+    var runs = 0;
     function measure() {
-        var last = 0, deltas = [];
+        var run = ++runs, last = 0, deltas = [];
         function tick(t) {
+            if (run !== runs) return;
             if (last) deltas.push(t - last);
             last = t;
             if (deltas.length < 60) {
@@ -707,15 +711,27 @@
         list.append(row);
     });
 
-    // moved to other screen = resize
+    // window size and zoom
     var settle = 0;
     window.addEventListener('resize', function () {
         clearTimeout(settle);
-        settle = setTimeout(function () {
-            info();
-            measure();
-        }, 500);
+        settle = setTimeout(info, 500);
     });
+
+    // dragging to same scale screen doesnt fire resize
+    // look where we are
+    function spot() {
+        return [screen.availLeft, screen.availTop, screen.width, screen.height].join();
+    }
+
+    var where = spot();
+    setInterval(function () {
+        if (spot() === where) return;
+        where = spot();
+        hz = 0;
+        info();
+        measure();
+    }, 1000);
 
     info();
     measure();

@@ -25,6 +25,10 @@ html.ip body {
     width: 100%;
 }
 
+#display_tests .ip_row {
+    align-items: center;
+}
+
 #display_stage {
     position: fixed;
     inset: 0;
